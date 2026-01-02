@@ -1,9 +1,4 @@
 .navbar {
-    background-color: rgba(255, 255, 255, 0.05);
-    /* Very subtle tint */
-    backdrop-filter: blur(10px);
-    /* Glassmorphism */
-    -webkit-backdrop-filter: blur(10px);
     position: fixed;
     /* Fixed to stay on top */
     top: 0;
@@ -13,6 +8,24 @@
     display: flex;
     align-items: center;
     transition: background-color 0.3s;
+}
+
+/* Gradient Blur Background */
+.navbar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Slightly stronger tint for visibility */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+    /* Blur fades out at bottom */
 }
 
 .navbar-container {
@@ -73,6 +86,8 @@
     border: none;
     padding: 12px 30px;
     border-radius: 30px;
+    text-decoration: none;
+    display: inline-block;
     /* Pill shape */
     font-weight: 600;
     cursor: pointer;
@@ -99,19 +114,34 @@
     }
 
     .navbar-links {
-        display: none;
+        display: flex;
         flex-direction: column;
         position: absolute;
-        top: 100px;
+        top: 90px;
+        /* Match navbar height */
         left: 0;
         width: 100%;
-        background-color: #fff;
-        padding: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        height: 0;
+        /* Hidden by default */
+        background-color: var(--color-secondary);
+        /* Match page bg */
+        padding: 0;
+        overflow: hidden;
+        transition: height 0.4s ease, padding 0.4s ease;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
     }
 
     .navbar-links.active {
-        display: flex;
+        height: calc(100vh - 90px);
+        /* Full height minus header */
+        padding: 40px 20px;
+    }
+
+    .navbar-links a {
+        font-size: 1.5rem;
+        /* Larger text for mobile */
     }
 
     .navbar-cta-container {
@@ -121,5 +151,24 @@
 
     .navbar-toggle {
         display: flex;
+    }
+
+    /* Burger Animation */
+    .navbar-toggle span {
+        transition: all 0.3s ease-in-out;
+        transform-origin: 5px 1px;
+    }
+
+    .navbar-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(0px, 0px);
+    }
+
+    .navbar-toggle.active span:nth-child(2) {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    .navbar-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(0px, -2px);
     }
 }

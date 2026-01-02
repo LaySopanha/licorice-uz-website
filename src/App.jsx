@@ -7,7 +7,6 @@ import About from './components/About';
 import Certificates from './components/Certificates';
 import FeaturedGallery from './components/FeaturedGallery';
 import Contact from './components/Contact';
-import Footer from './components/Footer';
 import { ToastContainer, useToast } from './components/Toast';
 
 function App() {
@@ -25,7 +24,6 @@ function App() {
             <FeaturedGallery />
 
             <Contact />
-            <Footer />
 
             <ToastContainer toasts={toasts} removeToast={removeToast} />
         </div>

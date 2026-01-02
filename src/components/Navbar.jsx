@@ -11,15 +11,15 @@ const Navbar = () => {
                     <img src="/images/B5-logo.png" alt="Feruz Logo" />
                 </div>
                 <div className={`navbar-links ${isOpen ? 'active' : ''}`}>
-                    <a href="#home">Главная</a>
-                    <a href="#products">Каталог</a>
-                    <a href="#about">О Компании</a>
-                    <a href="#contact">Контакты</a>
+                    <a href="#home" onClick={() => setIsOpen(false)}>Главная</a>
+                    <a href="#products" onClick={() => setIsOpen(false)}>Каталог</a>
+                    <a href="#about" onClick={() => setIsOpen(false)}>О Компании</a>
+                    <a href="#contact" onClick={() => setIsOpen(false)}>Контакты</a>
                 </div>
                 <div className="navbar-cta-container">
-                    <button className="btn-contact">Связаться</button>
+                    <a href="#contact" className="btn-contact">Связаться</a>
                 </div>
-                <div className="navbar-toggle" onClick={() => setIsOpen(!isOpen)}>
+                <div className={`navbar-toggle ${isOpen ? 'active' : ''}`} onClick={() => setIsOpen(!isOpen)}>
                     <span></span>
                     <span></span>
                     <span></span>

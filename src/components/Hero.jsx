@@ -10,7 +10,7 @@ const Hero = () => {
                 <button className="btn-primary">Запросить коммерческое предложение</button>
             </div>
             <div className="hero-image">
-                <img src="/images/main-hero-image-display.png" alt="Licorice Root" />
+                <img src="/images/main-hero-image-display.png" alt="Licorice Roots" />
             </div>
         </section>
     );
