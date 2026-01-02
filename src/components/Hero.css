@@ -1,0 +1,157 @@
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0px, 0px) scale(1.1);
+    }
+
+    50% {
+        transform: translate(-10px, -15px) scale(1.1);
+    }
+
+    100% {
+        transform: translate(0px, 0px) scale(1.1);
+    }
+}
+
+.hero {
+    padding: 15vh 0 5vh 5%;
+    /* Right padding 0 for full bleed image */
+    /* Responsive padding */
+    max-width: 100%;
+    /* Fluid width */
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    /* Adjusted ratio to give text more space */
+    gap: 2rem;
+    align-items: center;
+    min-height: 100vh;
+    /* Full screen height */
+    position: relative;
+    overflow: hidden;
+    /* Prevent horizontal scroll from image */
+}
+
+.hero-content {
+    z-index: 2;
+    padding-right: 20px;
+}
+
+.hero-content h1 {
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    /* Reduced max size to prevent wrapping */
+    /* Responsive font size */
+    font-weight: 800;
+    /* Extra bold */
+    color: #2A2A2A;
+    /* Darker black/grey */
+    margin-bottom: 24px;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    /* Tighter letter spacing for impactful headers */
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.hero-content p {
+    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+    color: #555;
+    margin-bottom: 40px;
+    font-weight: 400;
+    max-width: 600px;
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out 0.2s forwards;
+    /* Delay */
+}
+
+.btn-primary {
+    background: linear-gradient(110deg, var(--color-primary) 70%, #222 70%);
+    /* Sharp angled split */
+    background-size: 250% 100%;
+    /* Extra width for sliding effect */
+    background-position: 80% 0;
+    /* Align split */
+    color: white;
+    padding: 22px 50px;
+    border: none;
+    border-radius: 60px;
+    font-size: 1.15rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    box-shadow: 0 15px 30px rgba(81, 94, 59, 0.3);
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out 0.4s forwards;
+    white-space: nowrap;
+}
+
+.btn-primary:hover {
+    background-position: 10% 0;
+    /* Slide the dark section across or away */
+    padding-right: 60px;
+    /* Subtle expansion */
+    box-shadow: 0 20px 40px rgba(81, 94, 59, 0.5);
+    transform: translateY(-4px);
+}
+
+.btn-primary:active {
+    transform: translateY(-2px);
+}
+
+/* Image styling */
+.hero-image {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    /* Pushes to right edge */
+    margin-right: 0;
+    /* Clean alignment */
+    padding-right: 0;
+}
+
+.hero-image img {
+    border-radius: 0;
+    box-shadow: none;
+    width: 100%;
+    /* Fit container */
+    max-width: 900px;
+    /* Slightly larger */
+    height: auto;
+    object-fit: contain;
+    transform: none;
+    /* Remove float animation */
+    /* animation: float 6s ease-in-out infinite; */
+}
+
+@media (max-width: 768px) {
+    .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 120px 20px 60px;
+        /* Standard padding on mobile including right side */
+    }
+
+    .hero-image {
+        justify-content: center;
+        /* Center on mobile */
+    }
+}

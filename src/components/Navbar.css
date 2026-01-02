@@ -1,0 +1,125 @@
+.navbar {
+    background-color: rgba(255, 255, 255, 0.05);
+    /* Very subtle tint */
+    backdrop-filter: blur(10px);
+    /* Glassmorphism */
+    -webkit-backdrop-filter: blur(10px);
+    position: fixed;
+    /* Fixed to stay on top */
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.navbar-container {
+    max-width: 100%;
+    /* Fluid width */
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    padding: 0 5%;
+}
+
+.navbar-logo img {
+    height: 50px;
+    /* Slightly smaller for elegance */
+    width: auto;
+}
+
+.navbar-links {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+}
+
+.navbar-links a {
+    font-weight: 500;
+    color: var(--color-text-dark);
+    font-size: 0.95rem;
+    /* More refined size */
+    letter-spacing: 0.02em;
+    position: relative;
+    padding-bottom: 5px;
+}
+
+.navbar-links a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-primary);
+    transition: width 0.3s ease;
+}
+
+.navbar-links a:hover {
+    color: var(--color-primary);
+}
+
+.navbar-links a:hover::after {
+    width: 100%;
+}
+
+.btn-contact {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 30px;
+    /* Pill shape */
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.navbar-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 5px;
+}
+
+.navbar-toggle span {
+    width: 25px;
+    height: 3px;
+    background-color: var(--color-text-dark);
+}
+
+@media (max-width: 900px) {
+    .navbar-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .navbar-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100px;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-links.active {
+        display: flex;
+    }
+
+    .navbar-cta-container {
+        display: none;
+        /* Hide CTA on mobile for simplicity or move inside menu */
+    }
+
+    .navbar-toggle {
+        display: flex;
+    }
+}
