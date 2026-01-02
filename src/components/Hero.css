@@ -148,7 +148,8 @@
         background-image: url('/images/mobile-main-hero-image.png');
         /* Mobile specific image */
         background-size: 100%;
-        /* Full width, let height be whatever */
+        background-repeat: no-repeat;
+        /* Prevent duplication */
         background-position: center bottom;
         /* Anchor to bottom */
         justify-content: center;
