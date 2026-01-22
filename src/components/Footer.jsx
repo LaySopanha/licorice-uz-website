@@ -1,5 +1,6 @@
 import React from 'react';
 import './Footer.css';
+import { CONTACT_INFO, COMPANY_INFO } from '../config';
 
 const Footer = () => {
     return (
@@ -19,12 +20,12 @@ const Footer = () => {
                 </div>
                 <div className="footer-contact">
                     <h4>Contact Us</h4>
-                    <p>123 Family Business Lane</p>
-                    <p>info@feruz.com</p>
+                    <p>{CONTACT_INFO.address}</p>
+                    <p>{CONTACT_INFO.email}</p>
                 </div>
             </div>
             <div className="footer-bottom">
-                <p>&copy; {new Date().getFullYear()} Feruz. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} {COMPANY_INFO.name}. All rights reserved.</p>
             </div>
         </footer>
     );

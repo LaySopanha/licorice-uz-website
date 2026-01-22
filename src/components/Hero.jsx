@@ -16,7 +16,7 @@ const Hero = () => {
                 <button className="btn-primary" onClick={openModal}>Запросить коммерческое предложение</button>
             </div>
             <div className="hero-image">
-                <img src="/images/hero-bg-new.png" alt="Licorice Roots" />
+                <img src="/images/hero-bg-new.webp" alt="Licorice Roots" />
             </div>
 
             <PriceModal

@@ -1,13 +1,9 @@
 import emailjs from '@emailjs/browser';
 
-// EmailJS Configuration
-// Get these from https://dashboard.emailjs.com/
-const EMAIL_CONFIG = {
-    serviceId: 'service_5xfe9ip',      // Replace with your EmailJS Service ID
-    contactTemplateId: 'template_dxtvhag',  // Replace with Contact Form Template ID
-    priceTemplateId: 'template_55wdrud',      // Replace with Price Inquiry Template ID
-    publicKey: 'j-s_YRlJGVFUiXKJp'       // Replace with your EmailJS Public Key
-};
+import { EMAILJS_CONFIG } from '../config';
+
+// Link to config file for easier editing
+const EMAIL_CONFIG = EMAILJS_CONFIG;
 
 // Initialize EmailJS with public key
 emailjs.init(EMAIL_CONFIG.publicKey);

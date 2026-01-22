@@ -3,6 +3,7 @@ import './Contact.css';
 import SocialButtons from './SocialButtons';
 import { sendContactEmail, isEmailConfigured } from '../services/emailService';
 import PriceModal from './PriceModal';
+import { CONTACT_INFO } from '../config';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -128,7 +129,7 @@ const Contact = () => {
                             </div>
                             <div className="contact-text">
                                 <h4>Адрес</h4>
-                                <p>100154, Сергели Южная Промзона,<br />г.Ташкент, Республика Узбекистан.</p>
+                                <p>{CONTACT_INFO.address_lines[0]}<br />{CONTACT_INFO.address_lines[1]}</p>
                             </div>
                         </div>
 
@@ -141,8 +142,9 @@ const Contact = () => {
                             </div>
                             <div className="contact-text">
                                 <h4>Номер телефона</h4>
-                                <p>+998 90 187 45 89</p>
-                                <p>+998 71 256 34 12</p>
+                                {CONTACT_INFO.phone.map((phone, index) => (
+                                    <p key={index}>{phone}</p>
+                                ))}
                             </div>
                         </div>
 
@@ -155,7 +157,7 @@ const Contact = () => {
                             </div>
                             <div className="contact-text">
                                 <h4>Почта</h4>
-                                <p>glabra.uz@mail.ru</p>
+                                <p>{CONTACT_INFO.email}</p>
                             </div>
                         </div>
 
@@ -168,7 +170,7 @@ const Contact = () => {
                             </div>
                             <div className="contact-text">
                                 <h4>Сайт</h4>
-                                <p>http://licorice.uz</p>
+                                <p>{CONTACT_INFO.website}</p>
                             </div>
                         </div>
                     </div>
