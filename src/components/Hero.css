@@ -142,20 +142,49 @@
     transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
+/* Tablet (768px - 900px) - Scaled Desktop Layout */
+@media (max-width: 900px) {
+    .hero {
+        padding: 0 0 0 5%;
+    }
+
+    .hero-content h1 {
+        font-size: 3rem;
+        /* Scaled down from desktop 5rem */
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+        max-width: 400px;
+    }
+
+    .btn-primary {
+        padding: 16px 32px;
+        font-size: 1rem;
+    }
+
+    .hero-image {
+        width: 45%;
+    }
+}
+
+/* Specific Tablet Tweaks (768px - 900px) */
+@media (max-width: 900px) {
+    .hero-image {
+        width: 55%;
+    }
+}
+
+/* Mobile Layout (Stacked) - Starts below iPad width */
+@media (max-width: 750px) {
     .hero {
         min-height: 90vh;
         background-image: url('/images/mobile-main-hero-image.png');
-        /* Mobile specific image */
         background-size: 100%;
         background-repeat: no-repeat;
-        /* Prevent duplication */
         background-position: center bottom;
-        /* Anchor to bottom */
         justify-content: center;
-        /* Center content vertically */
         padding: 80px 5% 80px;
-        /* Equal top and bottom padding */
         align-items: center;
         flex-direction: column;
     }
@@ -167,7 +196,6 @@
     .hero::before {
         width: 100%;
         height: 60%;
-        /* Cover more text area */
         background: linear-gradient(to bottom, var(--color-secondary) 0%, var(--color-secondary) 50%, rgba(245, 244, 240, 0.1) 100%);
     }
 
@@ -181,7 +209,6 @@
 
     .hero-content h1 {
         font-size: 2.2rem;
-        /* Fixed readable size */
         margin-bottom: 16px;
         line-height: 1.2;
     }
@@ -196,7 +223,6 @@
         font-size: 0.95rem;
         padding: 16px 24px;
         width: 90%;
-        /* Wide button for easier tapping */
         max-width: 320px;
         margin: 0 auto;
         display: block;
@@ -229,5 +255,89 @@
         width: auto;
         /* Allow it to shrink if needed, or keep max-width but smaller padding */
         max-width: 100%;
+    }
+}
+
+/* Mobile S (320px) */
+/* Mobile M (375px - 414px) */
+/* Mobile M (375px - 414px) */
+/* Mobile M & L (375px - 425px) */
+@media (max-width: 430px) {
+    .hero {
+        padding: 50px 20px 50px;
+        /* Reduced vertical padding further */
+        background-position: center 110%;
+        /* Push image down slightly so button doesn't cover it */
+    }
+
+    .hero-content {
+        margin-top: 10px;
+    }
+
+    .hero-content h1 {
+        font-size: 1.5rem;
+        /* Reduced from 1.6rem to prevent excessive wrapping */
+        margin-bottom: 20px;
+    }
+
+    .hero-content p {
+        font-size: 0.95rem;
+        margin-bottom: 30px;
+        padding: 0 5px;
+    }
+
+    .btn-primary {
+        font-size: 0.85rem;
+        padding: 14px 24px;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+}
+
+/* Mobile S (320px) */
+@media (max-width: 360px) {
+    .hero {
+        padding: 60px 15px 60px;
+        /* Reduced vertical padding */
+    }
+
+    .hero-content h1 {
+        font-size: 1.5rem;
+        /* Further reduced */
+    }
+
+    .hero-content p {
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+    }
+
+    .btn-primary {
+        font-size: 0.75rem;
+        padding: 10px 15px;
+        width: 100%;
+        /* Full width on tiny screens looks better */
+    }
+}
+
+/* 4K & Large Screens (2560px+) */
+@media (min-width: 2000px) {
+    .hero-content {
+        max-width: 1600px;
+    }
+
+    .hero-content h1 {
+        font-size: 7rem;
+    }
+
+    .hero-content p {
+        font-size: 2rem;
+        max-width: 1000px;
+    }
+
+    .btn-primary {
+        padding: 30px 70px;
+        font-size: 1.5rem;
+        border-radius: 80px;
     }
 }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Contact.css';
 import SocialButtons from './SocialButtons';
 import { sendContactEmail, isEmailConfigured } from '../services/emailService';
+import PriceModal from './PriceModal';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -12,6 +13,12 @@ const Contact = () => {
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(null);
+
+    // Popup state
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+    const openPopup = () => setIsPopupOpen(true);
+    const closePopup = () => setIsPopupOpen(false);
 
     const validateForm = () => {
         const newErrors = {};
@@ -69,7 +76,7 @@ const Contact = () => {
             } else {
                 // Send email via EmailJS
                 const result = await sendContactEmail(formData);
-                
+
                 if (result.success) {
                     setSubmitStatus('success');
                 } else {
@@ -101,7 +108,7 @@ const Contact = () => {
                         <h3>Вам нужна дополнительная информация?</h3>
                         <p>Напишите нам и наш специалист перезвонит вам.</p>
                     </div>
-                    <button className="btn-cta">Написать</button>
+                    <button className="btn-cta" onClick={openPopup}>Написать</button>
                 </div>
             </div>
 
@@ -172,8 +179,8 @@ const Contact = () => {
                     <form className="contact-form" onSubmit={handleSubmit}>
                         <div className="form-group">
                             <label>Ф.И.О</label>
-                            <input 
-                                type="text" 
+                            <input
+                                type="text"
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
@@ -185,8 +192,8 @@ const Contact = () => {
 
                         <div className="form-group">
                             <label>Ваша почта</label>
-                            <input 
-                                type="email" 
+                            <input
+                                type="email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
@@ -198,7 +205,7 @@ const Contact = () => {
 
                         <div className="form-group">
                             <label>Комментарий</label>
-                            <textarea 
+                            <textarea
                                 name="message"
                                 value={formData.message}
                                 onChange={handleChange}
@@ -219,8 +226,8 @@ const Contact = () => {
                             </div>
                         )}
 
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             className="btn-submit"
                             disabled={isSubmitting}
                         >
@@ -231,7 +238,13 @@ const Contact = () => {
                     </form>
                 </div>
             </div>
-        </section>
+
+            <PriceModal
+                isOpen={isPopupOpen}
+                onClose={closePopup}
+                productTitle="Запрос дополнительной информации"
+            />
+        </section >
     );
 };
 

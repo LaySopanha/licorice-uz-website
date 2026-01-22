@@ -79,6 +79,9 @@
     line-height: 1.6;
     color: #4a4a4a;
     text-align: justify;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .about-benefits {
@@ -142,5 +145,22 @@
     .about-images {
         max-width: 600px;
         margin: 0 auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-description {
+        text-align: left;
+        /* Fix for weird gaps on mobile */
+        font-size: 0.9rem;
+    }
+
+    .about-benefits li {
+        font-size: 0.9rem;
+    }
+
+    .btn-details {
+        width: 100%;
+        text-align: center;
     }
 }
