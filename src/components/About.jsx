@@ -45,7 +45,7 @@ const About = () => {
                         <ul className="about-benefits">
                             <li>
                                 <span className="check-icon">✓</span>
-                                Поставка по всему Узбекистану
+                                Поставка по всему Миру
                             </li>
                             <li>
                                 <span className="check-icon">✓</span>
