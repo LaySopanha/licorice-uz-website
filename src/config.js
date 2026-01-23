@@ -15,29 +15,29 @@
  */
 
 export const EMAILJS_CONFIG = {
-    // Replace these with your Client's EmailJS credentials
-    serviceId: 'service_5xfe9ip',
-    contactTemplateId: 'template_dxtvhag',
-    priceTemplateId: 'template_55wdrud',
-    publicKey: 'j-s_YRlJGVFUiXKJp'
+    serviceId: 'service_c1bng4d',
+    contactTemplateId: 'template_ad477gp',
+    priceTemplateId: 'template_2p6utf9',
+    publicKey: 'nMDfGjw5mSsW-3-QT'
 };
 
+
 export const CONTACT_INFO = {
-    email: 'glabra.uz@mail.ru',
+    email: 'bogotmaster@gmail.com',
     phone: [
-        '+998 90 187 45 89',
-        '+998 71 256 34 12'
+        '+998 97 712 98 26',
+        '+998 99 512 98 26'
     ],
-    address: '100154, Сергели Южная Промзона, г.Ташкент, Республика Узбекистан.',
+    address: '220204, Боготский район, Хорезмская область, Республика Узбекистан',
     address_lines: [
-        '100154, Сергели Южная Промзона,',
-        'г.Ташкент, Республика Узбекистан.'
+        '220204, Боготский район,',
+        'Хорезмская область, Республика Узбекистан.'
     ],
-    website: 'http://licorice.uz',
-    website_display: 'licorice.uz',
+    website: 'https://bogotmaster.org',
+    website_display: 'bogotmaster.org',
     social: {
-        whatsapp: '998901874589', // Phone number for WhatsApp (no + or spaces)
-        telegram: 'licorice_uz'   // Telegram username (without @)
+        whatsapp: '998995129826', // Phone number for WhatsApp (no + or spaces)
+        telegram: 'e_f_r_u_z_0_0_2_6'   // Telegram username (without @)
     }
 };
 
