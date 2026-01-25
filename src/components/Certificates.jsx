@@ -4,28 +4,29 @@ import './Certificates.css';
 const Certificates = () => {
     // Placeholder data
     const certificates = [
-        { id: 1, title: 'Сертификат на густой экстракт' },
-        { id: 2, title: 'Сертификат на корень в форме лепестков' },
-        { id: 3, title: 'Сертификат на палочки солодкового корня' },
-        { id: 4, title: 'ГОСТы' },
+        { id: 1, title: 'Выписка из реестра', file: '/Certificate/Выписка%20из%20реестра.pdf' },
+        { id: 2, title: 'Свидетельство НДС', file: '/Certificate/Свидетельство%20НДС.pdf' },
+        { id: 3, title: 'Свидетельство о регистрации', file: '/Certificate/Свидетельство%20о%20регистрации.pdf' },
+        { id: 4, title: 'Удостоверение о регистрации', file: '/Certificate/Удостоверение%20о%20регистрации.pdf' },
     ];
 
     return (
         <section className="certificates-section">
             <div className="certificates-header">
-                <h2>Наши Сертификаты</h2>
+                <h2>Наши документы</h2>
             </div>
 
             <div className="certificates-wrapper">
-                {/* Navigation Arrow Left - Placeholder */}
-                <button className="nav-arrow left" aria-label="Previous">
-                    ←
-                </button>
-
                 <div className="certificates-container">
                     <div className="certificates-grid">
                         {certificates.map((cert) => (
-                            <div key={cert.id} className="certificate-item">
+                            <a
+                                key={cert.id}
+                                href={cert.file}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="certificate-item"
+                            >
                                 <div className="cert-icon-box">
                                     {/* Download Icon SVG */}
                                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -35,15 +36,10 @@ const Certificates = () => {
                                     </svg>
                                 </div>
                                 <p className="cert-title">{cert.title}</p>
-                            </div>
+                            </a>
                         ))}
                     </div>
                 </div>
-
-                {/* Navigation Arrow Right - Placeholder */}
-                <button className="nav-arrow right" aria-label="Next">
-                    →
-                </button>
             </div>
         </section>
     );

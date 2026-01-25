@@ -70,12 +70,12 @@ const galleryImages = [
         title: 'Таблетка A',
         description: 'Прессованный корень солодки, отборное сырьё.'
     },
-    {
-        id: 12,
-        src: '/images-new/product-12.jpg',
-        title: 'Таблетка мелкие A',
-        description: 'Таблетки малого размера, отборное сырьё.'
-    },
+    // {
+    //     id: 12,
+    //     src: '/images-new/product-12.jpg',
+    //     title: 'Таблетка мелкие A',
+    //     description: 'Таблетки малого размера, отборное сырьё.'
+    // },
     {
         id: 13,
         src: '/images-new/product-13.jpg',
@@ -93,6 +93,12 @@ const galleryImages = [
         src: '/images-new/product-15.jpg',
         title: 'Индивидуальный заказ',
         description: 'Производство и поставка корня солодки по индивидуальным требованиям.'
+    },
+    {
+        id: 16,
+        src: '/images-new/product-16.png',
+        title: 'Экстракт корня солодки',
+        description: 'Экстракт корня солодки в порошкообразной и жидкой форме'
     }
 ];
 
