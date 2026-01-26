@@ -90,6 +90,27 @@
     font-size: 0.95rem;
 }
 
+.lang-btn {
+    background: transparent;
+    border: 1px solid var(--color-text-dark);
+    color: var(--color-text-dark);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 15px;
+    transition: all 0.3s ease;
+}
+
+.lang-btn:hover {
+    background-color: var(--color-text-dark);
+    color: white;
+}
+
+.lang-btn-mobile {
+    display: none;
+}
+
 .navbar-toggle {
     display: none;
     flex-direction: column;
@@ -143,6 +164,17 @@
     .navbar-cta-container {
         display: none;
         /* Hide CTA on mobile for simplicity or move inside menu */
+    }
+
+    .lang-btn-mobile {
+        display: inline-block;
+        font-size: 1.2rem;
+        padding: 10px 25px;
+        border: 1px solid var(--color-text-dark);
+        border-radius: 30px;
+        background: transparent;
+        color: var(--color-text-dark);
+        margin-top: 10px;
     }
 
     .navbar-toggle {

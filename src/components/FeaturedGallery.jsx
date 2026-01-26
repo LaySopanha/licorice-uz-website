@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './FeaturedGallery.css';
 
+import { useLanguage } from '../context/LanguageContext';
+
 const FeaturedGallery = () => {
+    const { t } = useLanguage();
     const [images, setImages] = useState([]);
 
     useEffect(() => {
@@ -24,7 +27,7 @@ const FeaturedGallery = () => {
     return (
         <section id="gallery" className="featured-gallery-section">
             <div className="gallery-header">
-                <h2>Галерея</h2>
+                <h2>{t('gallery_title')}</h2>
             </div>
             <div className="featured-gallery-grid">
                 {images.map((src, index) => (

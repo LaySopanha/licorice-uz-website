@@ -3,7 +3,10 @@ import './PriceModal.css';
 import SocialButtons from './SocialButtons';
 import { sendPriceInquiryEmail, isEmailConfigured } from '../services/emailService';
 
+import { useLanguage } from '../context/LanguageContext';
+
 const PriceModal = ({ isOpen, onClose, productTitle, onSubmitSuccess }) => {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -21,23 +24,23 @@ const PriceModal = ({ isOpen, onClose, productTitle, onSubmitSuccess }) => {
         const newErrors = {};
 
         if (!formData.name.trim()) {
-            newErrors.name = 'Введите ваше имя';
+            newErrors.name = t('form_name_placeholder'); // or specific error
         }
 
         if (!formData.phone.trim()) {
-            newErrors.phone = 'Введите номер телефона';
+            newErrors.phone = t('modal_phone_error');
         } else if (!/^\+?[\d\s-()]+$/.test(formData.phone)) {
-            newErrors.phone = 'Неверный формат телефона';
+            newErrors.phone = t('modal_phone_invalid');
         }
 
         if (!formData.email.trim()) {
-            newErrors.email = 'Введите email';
+            newErrors.email = t('form_email_error');
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'Неверный формат email';
+            newErrors.email = t('form_email_invalid');
         }
 
         if (!formData.quantity.trim()) {
-            newErrors.quantity = 'Укажите количество';
+            newErrors.quantity = t('modal_quantity_error');
         }
 
         setErrors(newErrors);
@@ -80,7 +83,7 @@ const PriceModal = ({ isOpen, onClose, productTitle, onSubmitSuccess }) => {
                     ...formData,
                     product: productTitle
                 });
-                
+
                 if (!result.success) {
                     throw new Error(result.message);
                 }
@@ -96,7 +99,7 @@ const PriceModal = ({ isOpen, onClose, productTitle, onSubmitSuccess }) => {
             });
 
             setSubmitStatus('success');
-            
+
             // Close modal after showing success message
             setTimeout(() => {
                 onClose();
@@ -121,27 +124,27 @@ const PriceModal = ({ isOpen, onClose, productTitle, onSubmitSuccess }) => {
                 </button>
 
                 <div className="modal-header">
-                    <h2>Запрос цены</h2>
+                    <h2>{t('modal_price_title')}</h2>
                     <p className="modal-product">{productTitle}</p>
                 </div>
 
                 <form className="modal-form" onSubmit={handleSubmit}>
                     <div className="modal-form-group">
-                        <label>Ф.И.О *</label>
+                        <label>{t('form_name')} *</label>
                         <input
                             type="text"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
                             className={`modal-input ${errors.name ? 'error' : ''}`}
-                            placeholder="Иван Иванов"
+                            placeholder={t('form_name_placeholder')}
                         />
                         {errors.name && <span className="error-message">{errors.name}</span>}
                     </div>
 
                     <div className="modal-form-row">
                         <div className="modal-form-group">
-                            <label>Телефон *</label>
+                            <label>{t('modal_phone')} *</label>
                             <input
                                 type="tel"
                                 name="phone"
@@ -168,26 +171,26 @@ const PriceModal = ({ isOpen, onClose, productTitle, onSubmitSuccess }) => {
                     </div>
 
                     <div className="modal-form-group">
-                        <label>Количество *</label>
+                        <label>{t('modal_quantity')} *</label>
                         <input
                             type="text"
                             name="quantity"
                             value={formData.quantity}
                             onChange={handleChange}
                             className={`modal-input ${errors.quantity ? 'error' : ''}`}
-                            placeholder="Например: 100 кг, 1 тонна"
+                            placeholder={t('modal_quantity_placeholder')}
                         />
                         {errors.quantity && <span className="error-message">{errors.quantity}</span>}
                     </div>
 
                     <div className="modal-form-group">
-                        <label>Комментарий</label>
+                        <label>{t('form_comment')}</label>
                         <textarea
                             name="message"
                             value={formData.message}
                             onChange={handleChange}
                             className="modal-textarea"
-                            placeholder="Дополнительная информация..."
+                            placeholder={t('modal_comment_placeholder')}
                             rows="3"
                         />
                     </div>
@@ -197,7 +200,7 @@ const PriceModal = ({ isOpen, onClose, productTitle, onSubmitSuccess }) => {
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>Спасибо! Мы свяжемся с вами в ближайшее время.</span>
+                            <span>{t('modal_success')}</span>
                         </div>
                     )}
 
@@ -206,16 +209,16 @@ const PriceModal = ({ isOpen, onClose, productTitle, onSubmitSuccess }) => {
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>Произошла ошибка. Попробуйте позже.</span>
+                            <span>{t('modal_error')}</span>
                         </div>
                     )}
 
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         className="modal-submit-btn"
                         disabled={isSubmitting || submitStatus === 'success'}
                     >
-                        {isSubmitting ? 'Отправка...' : 'Отправить запрос'}
+                        {isSubmitting ? t('form_sending') : t('modal_submit')}
                     </button>
 
                     <SocialButtons productName={productTitle} />

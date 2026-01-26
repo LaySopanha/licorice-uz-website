@@ -5,7 +5,10 @@ import { sendContactEmail, isEmailConfigured } from '../services/emailService';
 import PriceModal from './PriceModal';
 import { CONTACT_INFO } from '../config';
 
+import { useLanguage } from '../context/LanguageContext';
+
 const Contact = () => {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -25,13 +28,13 @@ const Contact = () => {
         const newErrors = {};
 
         if (!formData.name.trim()) {
-            newErrors.name = 'Введите ваше имя';
+            newErrors.name = t('form_name_placeholder'); // Using placeholder as error for simplicity or add specific errors
         }
 
         if (!formData.email.trim()) {
-            newErrors.email = 'Введите email';
+            newErrors.email = t('form_email_error');
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'Неверный формат email';
+            newErrors.email = t('form_email_invalid');
         }
 
         setErrors(newErrors);
@@ -106,10 +109,10 @@ const Contact = () => {
             <div className="contact-cta-wrapper">
                 <div className="contact-cta">
                     <div className="contact-cta-content">
-                        <h3>Вам нужна дополнительная информация?</h3>
-                        <p>Напишите нам и наш специалист перезвонит вам.</p>
+                        <h3>{t('contact_cta_title')}</h3>
+                        <p>{t('contact_cta_text')}</p>
                     </div>
-                    <button className="btn-cta" onClick={openPopup}>Написать</button>
+                    <button className="btn-cta" onClick={openPopup}>{t('contact_cta_btn')}</button>
                 </div>
             </div>
 
@@ -117,7 +120,7 @@ const Contact = () => {
             <div className="contact-container">
                 {/* Left Column - Details */}
                 <div className="contact-info">
-                    <h2>Контакты</h2>
+                    <h2>{t('contact_title')}</h2>
 
                     <div className="contact-details">
                         {/* Address */}
@@ -128,8 +131,8 @@ const Contact = () => {
                                 </svg>
                             </div>
                             <div className="contact-text">
-                                <h4>Адрес</h4>
-                                <p>{CONTACT_INFO.address_lines[0]}<br />{CONTACT_INFO.address_lines[1]}</p>
+                                <h4>{t('contact_address')}</h4>
+                                <p>{t('address_line_1')}<br />{t('address_line_2')}</p>
                             </div>
                         </div>
 
@@ -141,7 +144,7 @@ const Contact = () => {
                                 </svg>
                             </div>
                             <div className="contact-text">
-                                <h4>Номер телефона</h4>
+                                <h4>{t('contact_phone')}</h4>
                                 {CONTACT_INFO.phone.map((phone, index) => (
                                     <p key={index}>{phone}</p>
                                 ))}
@@ -156,7 +159,7 @@ const Contact = () => {
                                 </svg>
                             </div>
                             <div className="contact-text">
-                                <h4>Почта</h4>
+                                <h4>{t('contact_email')}</h4>
                                 <p>{CONTACT_INFO.email}</p>
                             </div>
                         </div>
@@ -169,7 +172,7 @@ const Contact = () => {
                                 </svg>
                             </div>
                             <div className="contact-text">
-                                <h4>Сайт</h4>
+                                <h4>{t('contact_website')}</h4>
                                 <p>{CONTACT_INFO.website}</p>
                             </div>
                         </div>
@@ -180,20 +183,20 @@ const Contact = () => {
                 <div className="contact-form-wrapper">
                     <form className="contact-form" onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <label>Ф.И.О</label>
+                            <label>{t('form_name')}</label>
                             <input
                                 type="text"
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
                                 className={`form-input ${errors.name ? 'error' : ''}`}
-                                placeholder="Иван Иванов*"
+                                placeholder={`${t('form_name_placeholder')}*`}
                             />
                             {errors.name && <span className="error-message">{errors.name}</span>}
                         </div>
 
                         <div className="form-group">
-                            <label>Ваша почта</label>
+                            <label>{t('form_email')}</label>
                             <input
                                 type="email"
                                 name="email"
@@ -206,7 +209,7 @@ const Contact = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Комментарий</label>
+                            <label>{t('form_comment')}</label>
                             <textarea
                                 name="message"
                                 value={formData.message}
@@ -218,13 +221,13 @@ const Contact = () => {
 
                         {submitStatus === 'success' && (
                             <div className="success-message">
-                                ✓ Сообщение отправлено! Мы свяжемся с вами в ближайшее время.
+                                {t('form_success')}
                             </div>
                         )}
 
                         {submitStatus === 'error' && (
                             <div className="error-message-box">
-                                ✗ Произошла ошибка. Попробуйте позже или свяжитесь с нами напрямую.
+                                {t('form_error')}
                             </div>
                         )}
 
@@ -233,7 +236,7 @@ const Contact = () => {
                             className="btn-submit"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? 'Отправка...' : 'Отправить'}
+                            {isSubmitting ? t('form_sending') : t('form_submit')}
                         </button>
 
                         <SocialButtons />
@@ -244,7 +247,7 @@ const Contact = () => {
             <PriceModal
                 isOpen={isPopupOpen}
                 onClose={closePopup}
-                productTitle="Запрос дополнительной информации"
+                productTitle={t('modal_info_title')}
             />
         </section >
     );

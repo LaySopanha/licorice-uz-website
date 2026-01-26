@@ -1,7 +1,10 @@
 import React from 'react';
 import './Partners.css';
 
+import { useLanguage } from '../context/LanguageContext';
+
 const Partners = () => {
+    const { t } = useLanguage();
     const partners = [
         {
             id: 1,
@@ -22,7 +25,7 @@ const Partners = () => {
 
     return (
         <section className="partners-section">
-            <h2 className="partners-title">Наши Партнеры</h2>
+            <h2 className="partners-title">{t('partners_title')}</h2>
             <div className="partners-grid">
                 {partners.map((partner) => (
                     <div key={partner.id} className="partner-logo">

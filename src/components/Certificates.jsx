@@ -1,19 +1,22 @@
 import React from 'react';
 import './Certificates.css';
 
+import { useLanguage } from '../context/LanguageContext';
+
 const Certificates = () => {
-    // Placeholder data
+    const { t } = useLanguage();
+
     const certificates = [
-        { id: 1, title: 'Выписка из реестра', file: '/Certificate/Выписка%20из%20реестра.pdf' },
-        { id: 2, title: 'Свидетельство НДС', file: '/Certificate/Свидетельство%20НДС.pdf' },
-        { id: 3, title: 'Свидетельство о регистрации', file: '/Certificate/Свидетельство%20о%20регистрации.pdf' },
-        { id: 4, title: 'Удостоверение о регистрации', file: '/Certificate/Удостоверение%20о%20регистрации.pdf' },
+        { id: 1, title: t('cert_1'), file: '/Certificate/Выписка%20из%20реестра.pdf' },
+        { id: 2, title: t('cert_2'), file: '/Certificate/Свидетельство%20НДС.pdf' },
+        { id: 3, title: t('cert_3'), file: '/Certificate/Свидетельство%20о%20регистрации.pdf' },
+        { id: 4, title: t('cert_4'), file: '/Certificate/Удостоверение%20о%20регистрации.pdf' },
     ];
 
     return (
         <section className="certificates-section">
             <div className="certificates-header">
-                <h2>Наши документы</h2>
+                <h2>{t('certificates_title')}</h2>
             </div>
 
             <div className="certificates-wrapper">
