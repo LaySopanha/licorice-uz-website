@@ -20,13 +20,13 @@ const About = () => {
                     <div className="about-images">
                         {/* Implied collage structure */}
                         <div className="image-main">
-                            <img src="/images/image16.png" alt="Warehouse storage" loading="lazy" />
+                            <img src="/images/image16.png" alt={t('about_img_1')} loading="lazy" />
                         </div>
                         <div className="image-secondary">
-                            <img src="/images/image17.png" alt="Worker with product" loading="lazy" />
+                            <img src="/images/image17.png" alt={t('about_img_2')} loading="lazy" />
                         </div>
                         <div className="image-tertiary">
-                            <img src="/images/image18.png" alt="Truck loading" loading="lazy" />
+                            <img src="/images/image18.png" alt={t('about_img_3')} loading="lazy" />
                         </div>
                     </div>
                     <div className="about-text">

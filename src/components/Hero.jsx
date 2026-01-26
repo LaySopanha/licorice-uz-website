@@ -19,7 +19,7 @@ const Hero = () => {
                 <button className="btn-primary" onClick={openModal}>{t('hero_cta')}</button>
             </div>
             <div className="hero-image">
-                <img src="/images/hero-bg-new.webp" alt="Licorice Roots" />
+                <img src="/images/hero-bg-new.webp" alt={t('hero_image_alt')} />
             </div>
 
             <PriceModal

@@ -7,6 +7,7 @@ import About from './components/About';
 import Certificates from './components/Certificates';
 import FeaturedGallery from './components/FeaturedGallery';
 import Contact from './components/Contact';
+import SEO from './components/SEO';
 import { ToastContainer, useToast } from './components/Toast';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
 
     return (
         <div className="app">
+            <SEO />
             <Navbar />
             <Hero />
             <Gallery />
