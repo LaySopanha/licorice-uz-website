@@ -1,10 +1,13 @@
 import React from 'react';
 import './SocialButtons.css';
+import { useContent } from '../context/ContentContext';
 import { CONTACT_INFO } from '../config';
 
 const SocialButtons = ({ productName = '' }) => {
-    const phoneNumber = CONTACT_INFO.social.whatsapp;
-    const telegramUsername = CONTACT_INFO.social.telegram;
+    const { settings } = useContent();
+
+    const phoneNumber = settings?.whatsapp || CONTACT_INFO.social.whatsapp;
+    const telegramUsername = settings?.telegram || CONTACT_INFO.social.telegram;
 
     const getWhatsAppLink = () => {
         const message = productName

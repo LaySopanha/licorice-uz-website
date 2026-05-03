@@ -40,6 +40,8 @@ export const LanguageProvider = ({ children }) => {
             consultation_title: 'Консультация о компании',
             // Products Section
             our_products: 'Наша Продукция',
+            view_all_products: 'Смотреть все продукты',
+            related_products: 'Похожие продукты',
             get_price: 'Узнать цену',
             product_1_title: 'Бочонок A',
             product_1_desc: 'Корень солодки, нарезанный на отрезки длиной 5-8 см, отборная резка по размеру (диаметр A - большой).',
@@ -69,7 +71,6 @@ export const LanguageProvider = ({ children }) => {
             product_14_desc: 'Корень солодки дробленный в виде щепки.',
             product_15_title: 'Индивидуальный заказ',
             product_15_desc: 'Производство и поставка корня солодки по индивидуальным требованиям.',
-            product_16_title: 'Экстракт корня солодки',
             product_16_title: 'Экстракт корня солодки',
             product_16_desc: 'Экстракт корня солодки в порошкообразной и жидкой форме.',
             // Hero Section
@@ -159,6 +160,8 @@ export const LanguageProvider = ({ children }) => {
             consultation_title: 'Consultation about company',
             // Products Section
             our_products: 'Our Products',
+            view_all_products: 'View All Products',
+            related_products: 'Related Products',
             get_price: 'Get Price',
             product_1_title: 'Fingers A',
             product_1_desc: 'Licorice root cut into 5-8 cm lengths, selected cut by size (diameter A - large).',

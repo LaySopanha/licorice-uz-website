@@ -3,12 +3,21 @@ import './Contact.css';
 import SocialButtons from './SocialButtons';
 import { sendContactEmail, isEmailConfigured } from '../services/emailService';
 import PriceModal from './PriceModal';
-import { CONTACT_INFO } from '../config';
+import { useContent } from '../context/ContentContext';
 
 import { useLanguage } from '../context/LanguageContext';
 
 const Contact = () => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
+    const { settings } = useContent();
+    const contactInfo = {
+        phone: settings?.phone || [],
+        email: settings?.email || '',
+        address: settings?.address || '',
+        website: settings?.website || '',
+        whatsapp: settings?.whatsapp || '',
+        telegram: settings?.telegram || '',
+    };
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -79,7 +88,7 @@ const Contact = () => {
                 setSubmitStatus('success');
             } else {
                 // Send email via EmailJS
-                const result = await sendContactEmail(formData);
+                const result = await sendContactEmail(formData, language);
 
                 if (result.success) {
                     setSubmitStatus('success');
@@ -145,7 +154,7 @@ const Contact = () => {
                             </div>
                             <div className="contact-text">
                                 <h4>{t('contact_phone')}</h4>
-                                {CONTACT_INFO.phone.map((phone, index) => (
+                                {contactInfo.phone.map((phone, index) => (
                                     <p key={index}>{phone}</p>
                                 ))}
                             </div>
@@ -160,7 +169,7 @@ const Contact = () => {
                             </div>
                             <div className="contact-text">
                                 <h4>{t('contact_email')}</h4>
-                                <p>{CONTACT_INFO.email}</p>
+                                <p>{contactInfo.email}</p>
                             </div>
                         </div>
 
@@ -173,7 +182,7 @@ const Contact = () => {
                             </div>
                             <div className="contact-text">
                                 <h4>{t('contact_website')}</h4>
-                                <p>{CONTACT_INFO.website}</p>
+                                <p>{contactInfo.website}</p>
                             </div>
                         </div>
                     </div>

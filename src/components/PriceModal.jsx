@@ -5,8 +5,8 @@ import { sendPriceInquiryEmail, isEmailConfigured } from '../services/emailServi
 
 import { useLanguage } from '../context/LanguageContext';
 
-const PriceModal = ({ isOpen, onClose, productTitle, onSubmitSuccess }) => {
-    const { t } = useLanguage();
+const PriceModal = ({ isOpen, onClose, productTitle, onSubmitSuccess, addToast }) => {
+    const { t, language } = useLanguage();
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -82,7 +82,7 @@ const PriceModal = ({ isOpen, onClose, productTitle, onSubmitSuccess }) => {
                 const result = await sendPriceInquiryEmail({
                     ...formData,
                     product: productTitle
-                });
+                }, language);
 
                 if (!result.success) {
                     throw new Error(result.message);
