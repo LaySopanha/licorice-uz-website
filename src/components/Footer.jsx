@@ -16,7 +16,7 @@ const Footer = () => {
             <div className="footer-content">
                 <div className="footer-logo">
                     <Link to="/">
-                        <img src="/images/B5-logo.png" alt="Bogot Master" />
+                        <img src="/Logo/B5-logo.png" alt="Bogot Master" />
                     </Link>
                     <p>{t('footer_slogan')}</p>
                 </div>

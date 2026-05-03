@@ -18,8 +18,6 @@
 .footer-logo img {
     height: 40px;
     margin-bottom: 20px;
-    filter: brightness(0) invert(1);
-    /* Make logo white if it's dark, otherwise adjust */
 }
 
 .footer-links h4,
