@@ -5,13 +5,13 @@ const Stats = () => {
     const statsData = [
         {
             value: '10+',
-            label_ru: 'Лет опыта',
-            label_en: 'Years of Experience'
+            label_ru: 'Лет на рынке',
+            label_en: 'Years on market'
         },
         {
             value: '1500',
             label_ru: 'Тонн ежегодно',
-            label_en: 'Tons Annually'
+            label_en: 'Tons annually'
         },
         {
             value: '20+',
@@ -19,11 +19,12 @@ const Stats = () => {
             label_en: 'Experts'
         },
         {
-            value: '100%',
-            label_ru: 'Качество',
-            label_en: 'Quality'
+            value: '50+',
+            label_ru: 'B2B Клиентов',
+            label_en: 'B2B Clients'
         }
     ];
+
 
     const { language } = useLanguage();
 

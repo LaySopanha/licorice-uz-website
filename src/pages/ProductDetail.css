@@ -1,14 +1,12 @@
-.product-detail-page {
-    padding: 120px 5% 80px;
-    min-height: 100vh;
+.pd-section {
     background-color: var(--color-secondary);
-    max-width: 1300px;
-    margin: 0 auto;
+    min-height: 100vh;
 }
 
-.product-detail-loading {
-    padding: 140px 5% 80px;
-    min-height: 100vh;
+.product-detail-page {
+    padding: 120px 5% 80px;
+    max-width: 1300px;
+    margin: 0 auto;
 }
 
 .pd-skeleton-image {
@@ -55,16 +53,16 @@
 .pd-main {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 64px;
+    gap: 48px;
     align-items: start;
-    margin-bottom: 80px;
+    margin-bottom: 64px;
 }
 
 .pd-image-wrap {
-    border-radius: 24px;
+    border-radius: 20px;
     overflow: hidden;
     background: #fff;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
     aspect-ratio: 1;
 }
 
@@ -72,11 +70,6 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s ease;
-}
-
-.pd-image-wrap:hover img {
-    transform: scale(1.04);
 }
 
 .pd-info {
@@ -84,9 +77,10 @@
 }
 
 .pd-info h1 {
-    font-size: 2.4rem;
+    font-family: var(--font-family-heading);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
     font-weight: 700;
-    color: #1A1A1A;
+    color: var(--color-text-dark);
     margin-bottom: 20px;
     line-height: 1.2;
 }
@@ -129,6 +123,11 @@
     color: #fff;
 }
 
+.pd-quote {
+    max-width: 280px;
+    margin-bottom: 36px;
+}
+
 .pd-badges {
     display: flex;
     flex-wrap: wrap;
@@ -152,9 +151,10 @@
 }
 
 .pd-related h2 {
+    font-family: var(--font-family-heading);
     font-size: 1.8rem;
     font-weight: 700;
-    color: #1A1A1A;
+    color: var(--color-text-dark);
     margin-bottom: 32px;
 }
 
@@ -167,21 +167,24 @@
 .pd-related-card {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
     background: #fff;
-    border-radius: 16px;
-    padding: 12px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 20px;
+    padding: 16px;
+    transition: var(--transition-smooth);
+    border: 1px solid rgba(0,0,0,0.06);
+    text-decoration: none;
 }
 
 .pd-related-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    border-color: transparent;
 }
 
 .pd-related-image {
     aspect-ratio: 1;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
     background: #f0f0f0;
 }
@@ -190,36 +193,135 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
+    transition: transform 0.5s ease;
 }
 
 .pd-related-card:hover .pd-related-image img {
     transform: scale(1.05);
 }
 
-.pd-related-card p {
+.pd-related-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 0 4px 4px;
+}
+
+.pd-related-info h3 {
+    font-family: var(--font-family-body);
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin: 0 0 6px 0;
+    line-height: 1.3;
+}
+
+.pd-related-info p {
+    font-family: var(--font-family-body);
+    font-size: 0.82rem;
+    color: #666;
+    line-height: 1.45;
+    margin: 0 0 16px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-align: left;
+}
+
+.pd-related-link {
     font-size: 0.88rem;
     font-weight: 600;
-    color: #1A1A1A;
-    text-align: center;
-    padding: 0 4px 4px;
+    color: var(--color-primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: auto;
+    transition: transform 0.2s ease;
+}
+
+.pd-related-card:hover .pd-related-link {
+    transform: translateX(4px);
+}
+
+/* Progress bar — hidden on desktop */
+.pd-related-progress-container {
+    display: none;
 }
 
 /* Responsive */
 @media (max-width: 900px) {
+    .product-detail-page {
+        padding: 100px 4% 60px;
+    }
+
     .pd-main {
         grid-template-columns: 1fr;
-        gap: 36px;
+        gap: 32px;
     }
 
     .pd-info h1 {
         font-size: 1.8rem;
     }
+
+    .pd-related h2 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .pd-related {
+        padding-top: 40px;
+    }
+
+    .pd-related h2 {
+        font-size: 1.5rem;
+        margin-bottom: 24px;
+    }
+
+    .pd-related-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        gap: 16px;
+        padding: 4px 4px 16px 4%;
+        margin-left: -4%;
+        margin-right: -4%;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .pd-related-grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .pd-related-card {
+        flex: 0 0 65%;
+        scroll-snap-align: start;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .pd-related-progress-container {
+        display: block;
+        width: 60%;
+        height: 3px;
+        background-color: rgba(0, 0, 0, 0.08);
+        margin: 20px auto 0;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .pd-related-progress-bar {
+        height: 100%;
+        background-color: var(--color-primary);
+        transition: width 0.3s ease;
+        border-radius: 2px;
+    }
 }
 
 @media (max-width: 600px) {
-    .pd-related-grid {
-        grid-template-columns: 1fr 1fr;
+    .product-detail-page {
+        padding: 88px 4% 48px;
     }
 
     .pd-actions {
@@ -230,5 +332,9 @@
 
     .pd-contact-link {
         text-align: center;
+    }
+
+    .pd-badges {
+        gap: 8px;
     }
 }

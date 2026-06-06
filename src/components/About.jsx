@@ -3,6 +3,12 @@ import { useLanguage } from '../context/LanguageContext';
 import './About.css';
 import PriceModal from './PriceModal';
 
+const CheckIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="check-svg">
+        <polyline points="20 6 9 17 4 12" />
+    </svg>
+);
+
 const About = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { t } = useLanguage();
@@ -18,7 +24,6 @@ const About = () => {
                 </div>
                 <div className="about-content">
                     <div className="about-images reveal reveal-delay-1">
-                        {/* Implied collage structure */}
                         <div className="image-main">
                             <img src="/images/image16.png" alt={t('about_img_1')} loading="lazy" />
                         </div>
@@ -38,23 +43,22 @@ const About = () => {
                         </div>
                         <ul className="about-benefits">
                             <li>
-                                <span className="check-icon">✓</span>
+                                <CheckIcon />
                                 {t('about_benefit_1')}
                             </li>
                             <li>
-                                <span className="check-icon">✓</span>
+                                <CheckIcon />
                                 {t('about_benefit_2')}
                             </li>
                             <li>
-                                <span className="check-icon">✓</span>
+                                <CheckIcon />
                                 {t('about_benefit_3')}
                             </li>
                             <li>
-                                <span className="check-icon">✓</span>
+                                <CheckIcon />
                                 {t('about_benefit_4')}
                             </li>
                         </ul>
-                        <button className="btn-details" onClick={openModal}>{t('read_more')}</button>
                     </div>
                 </div>
             </div>

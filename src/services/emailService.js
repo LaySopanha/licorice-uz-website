@@ -32,6 +32,10 @@ async function sendAutoReply(email, name, language = 'ru', product = '') {
 }
 
 export const sendContactEmail = async (formData, language = 'ru') => {
+    // Always record the lead first — a failed/unconfigured email must not lose it.
+    saveInquiry({ type: 'contact', name: formData.name, email: formData.email, message: formData.message })
+        .catch(err => console.warn('saveInquiry failed:', err));
+
     try {
         const templateParams = {
             from_name: formData.name,
@@ -47,7 +51,6 @@ export const sendContactEmail = async (formData, language = 'ru') => {
         );
 
         sendAutoReply(formData.email, formData.name, language);
-        saveInquiry({ type: 'contact', name: formData.name, email: formData.email, message: formData.message });
 
         return { success: true, response };
     } catch (error) {
@@ -57,6 +60,9 @@ export const sendContactEmail = async (formData, language = 'ru') => {
 };
 
 export const sendPriceInquiryEmail = async (formData, language = 'ru') => {
+    saveInquiry({ type: 'price', name: formData.name, email: formData.email, phone: formData.phone, product: formData.product, quantity: formData.quantity, message: formData.message })
+        .catch(err => console.warn('saveInquiry failed:', err));
+
     try {
         const templateParams = {
             from_name: formData.name,
@@ -75,7 +81,51 @@ export const sendPriceInquiryEmail = async (formData, language = 'ru') => {
         );
 
         sendAutoReply(formData.email, formData.name, language, formData.product);
-        saveInquiry({ type: 'price', name: formData.name, email: formData.email, phone: formData.phone, product: formData.product, quantity: formData.quantity, message: formData.message });
+
+        return { success: true, response };
+    } catch (error) {
+        console.error('EmailJS Error:', error);
+        return { success: false, message: error.text || 'Failed to send email', error };
+    }
+};
+
+export const sendQuoteEmail = async (formData, items, language = 'ru') => {
+    saveInquiry({
+        type: 'quote',
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company || '',
+        items: items.map(i => ({ slug: i.slug, title: i.title, quantity: i.quantity || '' })),
+        message: formData.message || '',
+    }).catch(err => console.warn('saveInquiry failed:', err));
+
+    try {
+        const productList = items
+            .map(i => `• ${i.title}${i.quantity ? ` — ${i.quantity}` : ''}`)
+            .join('\n');
+
+        const header = language === 'ru'
+            ? 'Запрос предложения на несколько товаров'
+            : 'Multi-product quote request';
+
+        const templateParams = {
+            from_name: formData.name,
+            from_email: formData.email,
+            phone: formData.phone,
+            product_name: items.map(i => i.title).join(', '),
+            quantity: `${items.length} ${language === 'ru' ? 'поз.' : 'items'}`,
+            message: `${header}:\n${productList}\n\n${formData.company ? `${language === 'ru' ? 'Компания' : 'Company'}: ${formData.company}\n` : ''}${formData.message || ''}`,
+            to_name: 'Bogot Master',
+        };
+
+        const response = await emailjs.send(
+            EMAIL_CONFIG.serviceId,
+            EMAIL_CONFIG.priceTemplateId,
+            templateParams
+        );
+
+        sendAutoReply(formData.email, formData.name, language);
 
         return { success: true, response };
     } catch (error) {

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';
 import PriceModal from '../components/PriceModal';
+import QuoteButton from '../components/QuoteButton';
 import { ProductCardSkeleton } from '../components/Skeleton';
 import { useLanguage } from '../context/LanguageContext';
 import { useContent } from '../context/ContentContext';
@@ -52,6 +53,7 @@ const Products = ({ addToast }) => {
                                         >
                                             {t('get_price')}
                                         </button>
+                                        <QuoteButton product={product} variant="compact" />
                                     </div>
                                 </div>
                             </div>

@@ -16,6 +16,11 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    React.useEffect(() => {
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+        return () => { document.body.style.overflow = ''; };
+    }, [isOpen]);
+
     const toggleLanguage = () => {
         switchLanguage(language === 'ru' ? 'en' : 'ru');
     };
@@ -23,13 +28,15 @@ const Navbar = () => {
     const close = () => setIsOpen(false);
 
     return (
-        <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+        <nav className={`navbar ${scrolled ? 'scrolled' : ''} ${isOpen ? 'menu-open' : ''}`}>
             <div className="navbar-container">
                 <div className="navbar-logo">
                     <Link to="/" onClick={close}>
                         <img src="/images/B5-logo.png" alt="Bogot Master Logo" />
                     </Link>
                 </div>
+
+                {/* Desktop nav links — inside nav, positioned in center grid column */}
                 <div className={`navbar-links ${isOpen ? 'active' : ''}`}>
                     <NavLink to="/" end onClick={close}>{t('home')}</NavLink>
                     <NavLink to="/products" onClick={close}>{t('products')}</NavLink>
@@ -39,6 +46,7 @@ const Navbar = () => {
                         {t('langBtn')}
                     </button>
                 </div>
+
                 <div className="navbar-cta-container">
                     <button className="lang-btn" onClick={toggleLanguage}>
                         {t('langBtn')}

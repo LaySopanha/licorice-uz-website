@@ -49,6 +49,8 @@
 }
 
 .btn-cta:hover {
+    background-color: #333;
+    color: white;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
@@ -236,9 +238,9 @@
 }
 
 .btn-submit:hover:not(:disabled) {
-    background-color: #3e4830;
+    background-color: #333;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(81, 94, 59, 0.3);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .btn-submit:active:not(:disabled) {
@@ -254,7 +256,7 @@
 @media (max-width: 900px) {
     .contact-container {
         flex-direction: column;
-        gap: 60px;
+        gap: 48px;
     }
 
     .contact-info,
@@ -271,5 +273,41 @@
 
     .contact-cta-content h3 {
         font-size: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .contact-section {
+        padding-bottom: 56px;
+    }
+
+    .contact-cta-wrapper {
+        margin-bottom: 48px;
+    }
+
+    .contact-cta {
+        padding: 32px 24px;
+        border-radius: 16px;
+    }
+
+    .contact-cta-content h3 {
+        font-size: 1.15rem;
+    }
+
+    .contact-cta-content p {
+        font-size: 0.9rem;
+    }
+
+    .contact-info h2 {
+        font-size: 2rem;
+        margin-bottom: 28px;
+    }
+
+    .contact-details {
+        gap: 20px;
+    }
+
+    .contact-item {
+        gap: 14px;
     }
 }

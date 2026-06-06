@@ -38,8 +38,8 @@
 }
 
 .home-cta-btns .btn-primary:hover {
-    background: #f0f0f0;
-    color: #3f4a2e;
+    background: #333;
+    color: white;
 }
 
 .btn-secondary-outline {
@@ -58,17 +58,42 @@
 }
 
 @media (max-width: 768px) {
+    .home-cta-section {
+        padding: 72px 5%;
+    }
+
     .home-cta-content h2 {
         font-size: 2rem;
     }
-    
+
     .home-cta-btns {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .home-cta-btns a {
         width: 100%;
         max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-cta-section {
+        padding: 56px 4%;
+    }
+
+    .home-cta-content h2 {
+        font-size: 1.6rem;
+        margin-bottom: 14px;
+    }
+
+    .home-cta-content p {
+        font-size: 1rem;
+        margin-bottom: 28px;
+    }
+
+    .home-cta-btns .btn-primary,
+    .btn-secondary-outline {
+        padding: 14px 32px;
     }
 }

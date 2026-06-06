@@ -5,9 +5,6 @@ import {
 } from 'firebase/firestore';
 import { db } from './config';
 
-// Seed data lives in a Firebase-free module so it can be used as a fallback
-// without forcing the Firebase SDK into the initial bundle. Re-exported here
-// for backwards compatibility with existing imports.
 export { SEED_PRODUCTS, SEED_SETTINGS } from './seed';
 import { SEED_PRODUCTS, SEED_SETTINGS } from './seed';
 
@@ -91,25 +88,45 @@ export async function markInquiryRead(id) {
     await updateDoc(doc(db, 'inquiries', id), { read: true });
 }
 
+export async function deleteInquiry(id) {
+    await deleteDoc(doc(db, 'inquiries', id));
+}
+
 // ─── Stats ───────────────────────────────────────────────────────────────────
 
 export async function trackPageView(path) {
+    const key = path.replace(/\//g, '_').replace(/\./g, '_').replace(/^_/, '') || 'home';
+    const ref = doc(db, 'stats', 'pageviews');
     try {
-        const ref = doc(db, 'stats', 'pageviews');
-        await setDoc(ref, {
+        // updateDoc is the reliable way to atomically increment nested fields.
+        // It correctly handles dot-notation field paths (paths.some_key).
+        await updateDoc(ref, {
             total: increment(1),
-            [`paths.${path.replace(/\//g, '_').replace(/^_/, '') || 'home'}`]: increment(1),
-        }, { merge: true });
-    } catch { /* silent — don't break the app */ }
+            [`paths.${key}`]: increment(1),
+        });
+    } catch (err) {
+        if (err.code === 'not-found') {
+            // First ever page view — document doesn't exist yet, create it.
+            try {
+                await setDoc(ref, { total: 1, paths: { [key]: 1 } });
+            } catch { /* silent */ }
+        }
+        // Other errors (offline, rules) are silently ignored so they
+        // never break the user-facing app.
+    }
 }
 
 export async function fetchStats() {
-    const ref = doc(db, 'stats', 'pageviews');
-    const snap = await getDoc(ref);
-    if (!snap.exists()) return { total: 0, paths: {} };
-    const data = snap.data();
-    return {
-        total: data.total || 0,
-        paths: data.paths || {},
-    };
+    try {
+        const ref = doc(db, 'stats', 'pageviews');
+        const snap = await getDoc(ref);
+        if (!snap.exists()) return { total: 0, paths: {} };
+        const data = snap.data();
+        return {
+            total: data.total || 0,
+            paths: data.paths || {},
+        };
+    } catch {
+        return { total: 0, paths: {} };
+    }
 }

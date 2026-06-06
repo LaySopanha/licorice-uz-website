@@ -35,6 +35,17 @@ export const LanguageProvider = ({ children }) => {
             about_meta_desc: 'Bogot Master — семейная компания с 2014 года, заготовка, переработка и экспорт корня солодки из Узбекистана. До 1500 тонн в год.',
             contact_meta_title: 'Контакты — Запросить предложение | Bogot Master',
             contact_meta_desc: 'Свяжитесь с Bogot Master для оптовых поставок корня солодки. Получите индивидуальное коммерческое предложение для вашего бизнеса.',
+            // Quote cart
+            quote_add: 'В запрос',
+            quote_added: 'Добавлено',
+            quote_cart_title: 'Запрос предложения',
+            quote_empty: 'Список пуст. Добавьте товары для запроса предложения.',
+            quote_qty_placeholder: 'Кол-во (напр. 1 тонна)',
+            quote_remove: 'Удалить',
+            quote_clear: 'Очистить список',
+            quote_company: 'Компания',
+            quote_submit: 'Отправить запрос',
+            quote_success: 'Спасибо! Запрос отправлен. Мы свяжемся с вами в ближайшее время.',
             // About Section
             about_title: 'О компании',
             about_p1: 'Bogot Master — семейная компания, основанная в 2014 году, специализирующаяся на заготовке, переработке и экспорте корня солодки.',
@@ -137,6 +148,7 @@ export const LanguageProvider = ({ children }) => {
             modal_quantity_placeholder: 'Например: 100 кг, 1 тонна',
             modal_comment_placeholder: 'Дополнительная информация...',
             modal_submit: 'Отправить запрос',
+            modal_success_title: 'Запрос отправлен!',
             modal_success: 'Спасибо! Мы свяжемся с вами в ближайшее время.',
             modal_error: 'Произошла ошибка. Попробуйте позже.'
         },
@@ -167,6 +179,17 @@ export const LanguageProvider = ({ children }) => {
             about_meta_desc: 'Bogot Master is a family-owned company since 2014: harvesting, processing and export of licorice root from Uzbekistan. Up to 1,500 tons annually.',
             contact_meta_title: 'Contact — Request a Quote | Bogot Master',
             contact_meta_desc: 'Contact Bogot Master for wholesale licorice root supply. Get a personalized commercial proposal for your business.',
+            // Quote cart
+            quote_add: 'Add to quote',
+            quote_added: 'Added',
+            quote_cart_title: 'Request a Quote',
+            quote_empty: 'Your list is empty. Add products to request a quote.',
+            quote_qty_placeholder: 'Qty (e.g. 1 ton)',
+            quote_remove: 'Remove',
+            quote_clear: 'Clear list',
+            quote_company: 'Company',
+            quote_submit: 'Send Request',
+            quote_success: 'Thank you! Your request has been sent. We will contact you shortly.',
             // About Section
             about_title: 'About Company',
             about_p1: 'Bogot Master is a family-owned company established in 2014, specializing in the harvesting, processing, and export of licorice root.',
@@ -269,6 +292,7 @@ export const LanguageProvider = ({ children }) => {
             modal_quantity_placeholder: 'E.g., 100 kg, 1 ton',
             modal_comment_placeholder: 'Additional information...',
             modal_submit: 'Send Request',
+            modal_success_title: 'Request Sent!',
             modal_success: 'Thank you! We will contact you shortly.',
             modal_error: 'An error occurred. Please try again later.'
         }

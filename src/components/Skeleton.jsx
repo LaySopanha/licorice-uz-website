@@ -1,8 +1,8 @@
 import './Skeleton.css';
 
-const Skeleton = ({ type, className = '' }) => {
+const Skeleton = ({ type, className = '', style }) => {
     const classes = `skeleton skeleton-${type} ${className}`;
-    return <div className={classes} />;
+    return <div className={classes} style={style} />;
 };
 
 export const ProductCardSkeleton = () => (
@@ -21,8 +21,8 @@ export const ProductDetailSkeleton = () => (
             <Skeleton type="text" style={{ width: '200px' }} />
         </nav>
         <div className="pd-main">
-            <div className="pd-image-wrap">
-                <Skeleton type="rect" style={{ height: '500px', borderRadius: '16px' }} />
+            <div className="pd-image-wrap" style={{ boxShadow: 'none' }}>
+                <Skeleton type="rect" style={{ height: '100%', borderRadius: '0' }} />
             </div>
             <div className="pd-info">
                 <Skeleton type="title" style={{ height: '3rem' }} />

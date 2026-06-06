@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import './Contact.css';
 import SocialButtons from './SocialButtons';
 import { sendContactEmail, isEmailConfigured } from '../services/emailService';
-import PriceModal from './PriceModal';
 import { useContent } from '../context/ContentContext';
 import { useReveal } from '../hooks/useReveal';
 import { useLanguage } from '../context/LanguageContext';
 
-const Contact = () => {
+const Contact = ({ openPopup }) => {
     useReveal();
     const { t, language } = useLanguage();
     const { settings } = useContent();
@@ -28,11 +27,6 @@ const Contact = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(null);
 
-    // Popup state
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
-
-    const openPopup = () => setIsPopupOpen(true);
-    const closePopup = () => setIsPopupOpen(false);
 
     const validateForm = () => {
         const newErrors = {};
@@ -245,12 +239,7 @@ const Contact = () => {
                 </div>
             </div>
 
-            <PriceModal
-                isOpen={isPopupOpen}
-                onClose={closePopup}
-                productTitle={t('modal_info_title')}
-            />
-        </section >
+        </section>
     );
 };
 

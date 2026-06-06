@@ -34,11 +34,39 @@
 }
 
 @media (max-width: 768px) {
+    .partners-section {
+        padding: 48px 5%;
+    }
+
+    .partners-title {
+        font-size: 1.8rem;
+        margin-bottom: 28px;
+    }
+
     .partners-grid {
-        gap: 30px;
+        gap: 28px;
     }
 
     .partner-logo img {
-        max-width: 140px;
+        max-width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .partners-section {
+        padding: 40px 4%;
+    }
+
+    .partners-title {
+        font-size: 1.5rem;
+        margin-bottom: 24px;
+    }
+
+    .partners-grid {
+        gap: 20px;
+    }
+
+    .partner-logo img {
+        max-width: 100px;
     }
 }

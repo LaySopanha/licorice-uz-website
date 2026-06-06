@@ -17,6 +17,12 @@ import { useReveal } from '../hooks/useReveal';
 import '../components/Gallery.css';
 import './Home.css';
 
+const CheckIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="check-svg" style={{ color: 'var(--color-primary)', marginRight: '10px' }}>
+        <polyline points="20 6 9 17 4 12" />
+    </svg>
+);
+
 const Home = ({ addToast }) => {
     useReveal();
     const { t } = useLanguage();
@@ -77,22 +83,36 @@ const Home = ({ addToast }) => {
 
             <Process />
 
-            {/* ── About snippet ─────────────────────────────────────────── */}
+                        {/* ── About snippet ─────────────────────────────────────────── */}
             <section className="home-about-snippet reveal">
                 <div className="home-about-inner">
+                    <h2 className="home-about-section-title">{t('about_title')}</h2>
+                    
                     <div className="home-about-images reveal reveal-delay-1">
                         <img src="/images/image16.png" alt={t('about_img_1')} loading="lazy" />
-                        <img src="/images/image17.png" alt={t('about_img_2')} loading="lazy" />
+                        <img src="/images/image17.png" alt={t('about_img_2')} className="desktop-only-about-img" loading="lazy" />
                     </div>
                     <div className="home-about-text reveal reveal-delay-2">
-                        <h2>{t('about_title')}</h2>
-                        <p>{t('about_p1')}</p>
-                        <p>{t('about_p2')}</p>
+                        {/* Mobile layout: side-by-side portrait img + paragraphs */}
+                        <div className="home-about-mobile-layout">
+                            <div className="home-about-mobile-img">
+                                <img src="/images/image17.png" alt={t('about_img_2')} loading="lazy" />
+                            </div>
+                            <div className="home-about-paragraphs">
+                                <p>{t('about_p1')}</p>
+                                <p>{t('about_p2')}</p>
+                            </div>
+                        </div>
+
+                        {/* Desktop-only paragraphs */}
+                        <p className="desktop-about-p1">{t('about_p1')}</p>
+                        <p className="desktop-about-p2">{t('about_p2')}</p>
+
                         <ul className="home-benefits">
-                            <li><span className="check-icon">✓</span>{t('about_benefit_1')}</li>
-                            <li><span className="check-icon">✓</span>{t('about_benefit_2')}</li>
-                            <li><span className="check-icon">✓</span>{t('about_benefit_3')}</li>
-                            <li><span className="check-icon">✓</span>{t('about_benefit_4')}</li>
+                            <li><CheckIcon />{t('about_benefit_1')}</li>
+                            <li><CheckIcon />{t('about_benefit_2')}</li>
+                            <li><CheckIcon />{t('about_benefit_3')}</li>
+                            <li><CheckIcon />{t('about_benefit_4')}</li>
                         </ul>
                         <Link to="/about" className="btn-details">{t('read_more')}</Link>
                     </div>
