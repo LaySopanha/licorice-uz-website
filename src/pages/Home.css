@@ -42,19 +42,28 @@
     margin: 0 auto;
 }
 
+.home-products-grid > div {
+    display: flex;
+}
+
 .home-product-card {
     background: #fff;
     border-radius: 20px;
     padding: 14px;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    height: 100%;
     box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                box-shadow 0.4s ease;
+    cursor: pointer;
+    will-change: transform, box-shadow;
 }
 
 .home-product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 16px 32px rgba(0,0,0,0.09);
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }
 
 .home-product-image {
@@ -107,6 +116,30 @@
     line-height: 1.5;
     flex-grow: 1;
     margin-bottom: 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.btn-price {
+    width: 100%;
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    border: none;
+    padding: 14px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+
+.btn-price:hover {
+    background-color: #3f4a2e;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(81, 94, 59, 0.3);
 }
 
 .product-card-skeleton {
@@ -202,11 +235,26 @@
 
 .home-benefits li {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
     font-size: 0.95rem;
     color: #444;
     font-weight: 500;
+}
+
+.home-benefits li .check-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background-color: var(--color-primary);
+    border-radius: 50%;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    flex-shrink: 0;
+    margin-top: 3px;
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */

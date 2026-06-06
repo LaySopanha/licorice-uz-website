@@ -5,7 +5,16 @@ import './Navbar.css';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const { language, switchLanguage, t } = useLanguage();
+
+    React.useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const toggleLanguage = () => {
         switchLanguage(language === 'ru' ? 'en' : 'ru');
@@ -14,7 +23,7 @@ const Navbar = () => {
     const close = () => setIsOpen(false);
 
     return (
-        <nav className="navbar">
+        <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
             <div className="navbar-container">
                 <div className="navbar-logo">
                     <Link to="/" onClick={close}>

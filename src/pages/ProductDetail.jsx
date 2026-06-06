@@ -6,9 +6,11 @@ import PriceModal from '../components/PriceModal';
 import { ProductDetailSkeleton } from '../components/Skeleton';
 import { useLanguage } from '../context/LanguageContext';
 import { useContent } from '../context/ContentContext';
+import { useReveal } from '../hooks/useReveal';
 import './ProductDetail.css';
 
 const ProductDetail = ({ addToast }) => {
+    useReveal();
     const { slug } = useParams();
     const navigate = useNavigate();
     const { t } = useLanguage();
@@ -37,7 +39,7 @@ const ProductDetail = ({ addToast }) => {
             <SEO />
             <div className="product-detail-page">
                 {/* Breadcrumb */}
-                <nav className="pd-breadcrumb">
+                <nav className="pd-breadcrumb reveal">
                     <Link to="/">{t('home')}</Link>
                     <span>/</span>
                     <Link to="/products">{t('products')}</Link>
@@ -47,11 +49,11 @@ const ProductDetail = ({ addToast }) => {
 
                 {/* Main content */}
                 <div className="pd-main">
-                    <div className="pd-image-wrap">
+                    <div className="pd-image-wrap reveal reveal-delay-1">
                         <img src={product.image} alt={product.title} />
                     </div>
 
-                    <div className="pd-info">
+                    <div className="pd-info reveal reveal-delay-2">
                         <h1>{product.title}</h1>
                         <p className="pd-description">{product.description}</p>
 
@@ -77,11 +79,11 @@ const ProductDetail = ({ addToast }) => {
 
                 {/* Related products */}
                 {related.length > 0 && (
-                    <div className="pd-related">
+                    <div className="pd-related reveal">
                         <h2>{t('related_products')}</h2>
                         <div className="pd-related-grid">
-                            {related.map(p => (
-                                <Link key={p.slug} to={`/products/${p.slug}`} className="pd-related-card">
+                            {related.map((p, index) => (
+                                <Link key={p.slug} to={`/products/${p.slug}`} className={`pd-related-card reveal reveal-delay-${index + 1}`}>
                                     <div className="pd-related-image">
                                         <img src={p.image} alt={p.title} loading="lazy" />
                                     </div>

@@ -11,13 +11,13 @@ const About = () => {
     const closeModal = () => setIsModalOpen(false);
 
     return (
-        <section className="about-section" id="about">
+        <section className="about-section reveal" id="about">
             <div className="about-container">
-                <div className="about-header">
+                <div className="about-header reveal">
                     <h2>{t('about_title')}</h2>
                 </div>
                 <div className="about-content">
-                    <div className="about-images">
+                    <div className="about-images reveal reveal-delay-1">
                         {/* Implied collage structure */}
                         <div className="image-main">
                             <img src="/images/image16.png" alt={t('about_img_1')} loading="lazy" />
@@ -29,7 +29,7 @@ const About = () => {
                             <img src="/images/image18.png" alt={t('about_img_3')} loading="lazy" />
                         </div>
                     </div>
-                    <div className="about-text">
+                    <div className="about-text reveal reveal-delay-2">
                         <div className="about-description">
                             <p>{t('about_p1')}</p>
                             <p>{t('about_p2')}</p>

@@ -1,27 +1,25 @@
 .navbar {
     position: fixed;
-    /* Fixed to stay on top */
     top: 0;
     width: 100%;
     z-index: 1000;
     height: 90px;
     display: flex;
     align-items: center;
-    transition: background-color 0.3s;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: transparent;
 }
 
-/* Gradient Blur Background */
+.navbar.scrolled {
+    height: 70px;
+    background-color: rgba(245, 244, 240, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+
 .navbar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    z-index: -1;
-    background-color: var(--color-secondary);
-    /* Solid background color as requested */
+    display: none;
 }
 
 .navbar-container {

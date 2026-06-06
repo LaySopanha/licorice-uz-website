@@ -6,10 +6,12 @@ import PriceModal from '../components/PriceModal';
 import { ProductCardSkeleton } from '../components/Skeleton';
 import { useLanguage } from '../context/LanguageContext';
 import { useContent } from '../context/ContentContext';
+import { useReveal } from '../hooks/useReveal';
 import '../components/Gallery.css';
 import './Products.css';
 
 const Products = ({ addToast }) => {
+    useReveal();
     const { t } = useLanguage();
     const { products, loading } = useContent();
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -24,7 +26,7 @@ const Products = ({ addToast }) => {
         <Layout>
             <SEO />
             <div className="products-page">
-                <div className="products-page-header">
+                <div className="products-page-header reveal">
                     <h1>{t('our_products')}</h1>
                 </div>
 
@@ -33,22 +35,24 @@ const Products = ({ addToast }) => {
                         ? Array(8).fill(0).map((_, i) => (
                             <ProductCardSkeleton key={i} />
                         ))
-                        : products.map(product => (
-                            <div key={product.slug} className="gallery-card-item">
-                                <Link to={`/products/${product.slug}`} className="gallery-card-image">
-                                    <img src={product.image} alt={product.title} loading="lazy" />
-                                </Link>
-                                <div className="gallery-card-content">
-                                    <h3>
-                                        <Link to={`/products/${product.slug}`}>{product.title}</Link>
-                                    </h3>
-                                    <p>{product.description}</p>
-                                    <button
-                                        className="btn-price"
-                                        onClick={() => openModal(product)}
-                                    >
-                                        {t('get_price')}
-                                    </button>
+                        : products.map((product, index) => (
+                            <div key={product.slug} className={`reveal reveal-delay-${(index % 4) + 1}`}>
+                                <div className="gallery-card-item">
+                                    <Link to={`/products/${product.slug}`} className="gallery-card-image">
+                                        <img src={product.image} alt={product.title} loading="lazy" />
+                                    </Link>
+                                    <div className="gallery-card-content">
+                                        <h3>
+                                            <Link to={`/products/${product.slug}`}>{product.title}</Link>
+                                        </h3>
+                                        <p>{product.description}</p>
+                                        <button
+                                            className="btn-price"
+                                            onClick={() => openModal(product)}
+                                        >
+                                            {t('get_price')}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ))

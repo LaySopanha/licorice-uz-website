@@ -21,15 +21,10 @@
 }
 
 .certificates-container {
-    background: #FAFAFA;
-    /* Explicit white/off-white background for container? Or just cards? 
-    Screenshot shows a large white rounded container holding ALL certs? 
-    Yes, "rounded rect" background behind the items. */
     background: white;
     border-radius: 40px;
     padding: 40px 20px;
     flex-grow: 1;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
 }
 
 .certificates-grid {

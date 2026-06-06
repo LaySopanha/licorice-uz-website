@@ -60,28 +60,8 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-
-
-
-.about-text {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    padding-top: 10px;
-}
-
-.about-description {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: #4a4a4a;
-    text-align: justify;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .about-benefits {
@@ -90,14 +70,15 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    margin: 20px 0;
 }
 
 .about-benefits li {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 15px;
     font-size: 1rem;
-    color: #555;
+    color: #4a4a4a;
     font-weight: 500;
 }
 
@@ -107,32 +88,34 @@
     justify-content: center;
     width: 24px;
     height: 24px;
-    border: 2px solid #5A7D7C;
-    /* Teal-ish green from design? Or Primary? */
+    background-color: var(--color-primary);
     border-radius: 50%;
-    color: #5A7D7C;
-    font-size: 14px;
+    color: white;
+    font-size: 12px;
     font-weight: bold;
+    flex-shrink: 0;
+    margin-top: 2px;
 }
 
 .btn-details {
-    background-color: #6D6352;
-    /* Brownish from screenshot */
+    background-color: var(--color-primary);
     color: white;
     border: none;
-    padding: 14px 40px;
+    padding: 16px 48px;
     border-radius: 30px;
-    /* Pill shape */
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     align-self: flex-start;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
     margin-top: 10px;
+    box-shadow: 0 10px 20px rgba(81, 94, 59, 0.2);
 }
 
 .btn-details:hover {
-    background-color: #554d40;
+    background-color: #3f4a2e;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(81, 94, 59, 0.4);
 }
 
 /* Responsiveness */
@@ -148,19 +131,73 @@
     }
 }
 
-@media (max-width: 480px) {
-    .about-description {
-        text-align: left;
-        /* Fix for weird gaps on mobile */
-        font-size: 0.9rem;
-    }
+/* ── About Page Extra Sections ───────────────────────────────────────────── */
+.about-extra-section {
+    padding: 80px 5%;
+    background-color: white;
+}
 
-    .about-benefits li {
-        font-size: 0.9rem;
-    }
+.about-extra-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
-    .btn-details {
-        width: 100%;
-        text-align: center;
+.about-extra-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 80px;
+    align-items: center;
+}
+
+.about-extra-content h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 24px;
+}
+
+.about-extra-content p {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.about-extra-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.extra-stat-card {
+    background: var(--color-secondary);
+    padding: 40px;
+    border-radius: 30px;
+    text-align: center;
+    border: 1px solid rgba(0,0,0,0.02);
+    transition: transform 0.3s ease;
+}
+
+.extra-stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.extra-stat-card h3 {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: 10px;
+}
+
+.extra-stat-card p {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 500;
+}
+
+@media (max-width: 1024px) {
+    .about-extra-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
     }
 }

@@ -71,3 +71,30 @@ button:active,
 .btn-contact:active {
     transform: translateY(0);
 }
+
+/* Reveal Animations */
+.reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease-out,
+                transform 0.5s ease-out;
+    will-change: opacity, transform;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.05s; }
+.reveal-delay-2 { transition-delay: 0.1s; }
+.reveal-delay-3 { transition-delay: 0.15s; }
+.reveal-delay-4 { transition-delay: 0.2s; }
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}

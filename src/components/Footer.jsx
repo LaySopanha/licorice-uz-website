@@ -12,15 +12,15 @@ const Footer = () => {
     const address = settings?.address || '';
 
     return (
-        <footer className="footer">
+        <footer className="footer reveal">
             <div className="footer-content">
-                <div className="footer-logo">
+                <div className="footer-logo reveal reveal-delay-1">
                     <Link to="/">
                         <img src="/Logo/B5-logo.png" alt="Bogot Master" />
                     </Link>
                     <p>{t('footer_slogan')}</p>
                 </div>
-                <div className="footer-links">
+                <div className="footer-links reveal reveal-delay-2">
                     <h4>{t('footer_quick_links')}</h4>
                     <ul>
                         <li><Link to="/">{t('home')}</Link></li>
@@ -29,7 +29,7 @@ const Footer = () => {
                         <li><Link to="/contact">{t('contact')}</Link></li>
                     </ul>
                 </div>
-                <div className="footer-contact">
+                <div className="footer-contact reveal reveal-delay-3">
                     <h4>{t('footer_contact_us')}</h4>
                     <p>{address}</p>
                     <p>{email}</p>

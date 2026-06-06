@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';
 import Hero from '../components/Hero';
+import Stats from '../components/Stats';
+import Process from '../components/Process';
+import HomeCTA from '../components/HomeCTA';
 import PriceModal from '../components/PriceModal';
 import Certificates from '../components/Certificates';
 import Partners from '../components/Partners';
@@ -10,10 +13,12 @@ import FeaturedGallery from '../components/FeaturedGallery';
 import { ProductCardSkeleton } from '../components/Skeleton';
 import { useLanguage } from '../context/LanguageContext';
 import { useContent } from '../context/ContentContext';
+import { useReveal } from '../hooks/useReveal';
 import '../components/Gallery.css';
 import './Home.css';
 
 const Home = ({ addToast }) => {
+    useReveal();
     const { t } = useLanguage();
     const { featuredProducts, loading } = useContent();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,9 +34,10 @@ const Home = ({ addToast }) => {
             <SEO />
 
             <Hero addToast={addToast} />
+            <Stats />
 
             {/* ── Featured products ────────────────────────────────────── */}
-            <section className="home-products-section">
+            <section className="home-products-section reveal">
                 <div className="home-products-header">
                     <h2>{t('our_products')}</h2>
                     <Link to="/products" className="btn-view-all">{t('view_all_products')}</Link>
@@ -41,22 +47,24 @@ const Home = ({ addToast }) => {
                         ? Array(4).fill(0).map((_, i) => (
                             <ProductCardSkeleton key={i} />
                         ))
-                        : featuredProducts.slice(0, 4).map(product => (
-                            <div key={product.slug} className="home-product-card">
-                                <Link to={`/products/${product.slug}`} className="home-product-image">
-                                    <img src={product.image} alt={product.title} loading="lazy" />
-                                </Link>
-                                <div className="home-product-content">
-                                    <h3>
-                                        <Link to={`/products/${product.slug}`}>{product.title}</Link>
-                                    </h3>
-                                    <p>{product.description}</p>
-                                    <button
-                                        className="btn-price"
-                                        onClick={() => openProductModal(product)}
-                                    >
-                                        {t('get_price')}
-                                    </button>
+                        : featuredProducts.slice(0, 4).map((product, index) => (
+                            <div key={product.slug} className={`reveal reveal-delay-${(index % 4) + 1}`}>
+                                <div className="home-product-card">
+                                    <Link to={`/products/${product.slug}`} className="home-product-image">
+                                        <img src={product.image} alt={product.title} loading="lazy" />
+                                    </Link>
+                                    <div className="home-product-content">
+                                        <h3>
+                                            <Link to={`/products/${product.slug}`}>{product.title}</Link>
+                                        </h3>
+                                        <p>{product.description}</p>
+                                        <button
+                                            className="btn-price"
+                                            onClick={() => openProductModal(product)}
+                                        >
+                                            {t('get_price')}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ))
@@ -67,14 +75,16 @@ const Home = ({ addToast }) => {
                 </div>
             </section>
 
+            <Process />
+
             {/* ── About snippet ─────────────────────────────────────────── */}
-            <section className="home-about-snippet">
+            <section className="home-about-snippet reveal">
                 <div className="home-about-inner">
-                    <div className="home-about-images">
+                    <div className="home-about-images reveal reveal-delay-1">
                         <img src="/images/image16.png" alt={t('about_img_1')} loading="lazy" />
                         <img src="/images/image17.png" alt={t('about_img_2')} loading="lazy" />
                     </div>
-                    <div className="home-about-text">
+                    <div className="home-about-text reveal reveal-delay-2">
                         <h2>{t('about_title')}</h2>
                         <p>{t('about_p1')}</p>
                         <p>{t('about_p2')}</p>
@@ -89,9 +99,11 @@ const Home = ({ addToast }) => {
                 </div>
             </section>
 
-            <Certificates />
-            <Partners />
-            <FeaturedGallery />
+            <div className="reveal"><Certificates /></div>
+            <div className="reveal"><Partners /></div>
+            <div className="reveal"><FeaturedGallery /></div>
+
+            <HomeCTA />
 
             <PriceModal
                 isOpen={isModalOpen}
