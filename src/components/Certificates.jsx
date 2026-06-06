@@ -1,4 +1,3 @@
-import React from 'react';
 import './Certificates.css';
 
 import { useLanguage } from '../context/LanguageContext';

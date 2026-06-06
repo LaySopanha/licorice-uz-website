@@ -1,10 +1,7 @@
-import React from 'react';
 import './Stats.css';
 import { useLanguage } from '../context/LanguageContext';
 
 const Stats = () => {
-    const { t } = useLanguage();
-
     const statsData = [
         {
             value: '10+',

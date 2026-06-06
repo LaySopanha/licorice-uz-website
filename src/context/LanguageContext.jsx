@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext } from 'react';
 
 const LanguageContext = createContext();
 
@@ -23,6 +23,18 @@ export const LanguageProvider = ({ children }) => {
             og_description: 'Производство и экспорт корня солодки высшего качества из Узбекистана. Надежный партнер для вашего бизнеса.',
             schema_description: 'Семейная компания, специализирующаяся на заготовке, переработке и экспорте корня солодки из Узбекистана.',
             hero_image_alt: 'Корни солодки из Узбекистана',
+            // 404
+            notfound_title: 'Страница не найдена — Bogot Master',
+            notfound_heading: 'Страница не найдена',
+            notfound_text: 'К сожалению, запрашиваемая страница не существует или была перемещена.',
+            notfound_home: 'Вернуться на главную',
+            // Per-page SEO
+            products_meta_title: 'Продукция — Корень солодки оптом | Bogot Master',
+            products_meta_desc: 'Полный каталог продукции из корня солодки: палочки, слайсы, гранулы, порошок и экстракт. Оптовые поставки из Узбекистана по всему миру.',
+            about_meta_title: 'О компании — Экспортёр солодки | Bogot Master',
+            about_meta_desc: 'Bogot Master — семейная компания с 2014 года, заготовка, переработка и экспорт корня солодки из Узбекистана. До 1500 тонн в год.',
+            contact_meta_title: 'Контакты — Запросить предложение | Bogot Master',
+            contact_meta_desc: 'Свяжитесь с Bogot Master для оптовых поставок корня солодки. Получите индивидуальное коммерческое предложение для вашего бизнеса.',
             // About Section
             about_title: 'О компании',
             about_p1: 'Bogot Master — семейная компания, основанная в 2014 году, специализирующаяся на заготовке, переработке и экспорте корня солодки.',
@@ -143,6 +155,18 @@ export const LanguageProvider = ({ children }) => {
             og_description: 'Production and export of high-quality licorice root from Uzbekistan. A reliable partner for your business.',
             schema_description: 'Family-owned company specializing in the harvesting, processing, and export of licorice root from Uzbekistan.',
             hero_image_alt: 'Licorice Roots from Uzbekistan',
+            // 404
+            notfound_title: 'Page Not Found — Bogot Master',
+            notfound_heading: 'Page Not Found',
+            notfound_text: 'Sorry, the page you are looking for does not exist or has been moved.',
+            notfound_home: 'Back to Home',
+            // Per-page SEO
+            products_meta_title: 'Products — Wholesale Licorice Root | Bogot Master',
+            products_meta_desc: 'Full catalog of licorice root products: sticks, slices, granules, powder and extract. Wholesale supply from Uzbekistan worldwide.',
+            about_meta_title: 'About — Licorice Exporter | Bogot Master',
+            about_meta_desc: 'Bogot Master is a family-owned company since 2014: harvesting, processing and export of licorice root from Uzbekistan. Up to 1,500 tons annually.',
+            contact_meta_title: 'Contact — Request a Quote | Bogot Master',
+            contact_meta_desc: 'Contact Bogot Master for wholesale licorice root supply. Get a personalized commercial proposal for your business.',
             // About Section
             about_title: 'About Company',
             about_p1: 'Bogot Master is a family-owned company established in 2014, specializing in the harvesting, processing, and export of licorice root.',

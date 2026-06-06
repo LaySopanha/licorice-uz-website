@@ -4,11 +4,12 @@ import ScrollToTop from './components/ScrollToTop';
 import { ToastContainer, useToast } from './components/Toast';
 
 import Home from './pages/Home';
-import Products from './pages/Products';
-import ProductDetail from './pages/ProductDetail';
-import AboutPage from './pages/AboutPage';
-import ContactPage from './pages/ContactPage';
 
+const Products = lazy(() => import('./pages/Products'));
+const ProductDetail = lazy(() => import('./pages/ProductDetail'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 
@@ -27,6 +28,7 @@ function App() {
                     <Route path="/contact" element={<ContactPage addToast={addToast} />} />
                     <Route path="/admin/login" element={<AdminLogin />} />
                     <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </Suspense>
             <ToastContainer toasts={toasts} removeToast={removeToast} />

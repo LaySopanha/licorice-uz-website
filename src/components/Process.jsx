@@ -1,9 +1,8 @@
-import React from 'react';
 import './Process.css';
 import { useLanguage } from '../context/LanguageContext';
 
 const Process = () => {
-    const { t, language } = useLanguage();
+    const { language } = useLanguage();
 
     const steps = [
         {

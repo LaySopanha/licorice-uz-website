@@ -15,10 +15,10 @@
  */
 
 export const EMAILJS_CONFIG = {
-    serviceId: 'service_c1bng4d',
-    contactTemplateId: 'template_ad477gp',
-    priceTemplateId: 'template_2p6utf9',
-    publicKey: 'nMDfGjw5mSsW-3-QT'
+    serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_c1bng4d',
+    contactTemplateId: import.meta.env.VITE_EMAILJS_CONTACT_TEMPLATE_ID || 'template_ad477gp',
+    priceTemplateId: import.meta.env.VITE_EMAILJS_PRICE_TEMPLATE_ID || 'template_2p6utf9',
+    publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'nMDfGjw5mSsW-3-QT'
 };
 
 
@@ -42,6 +42,5 @@ export const CONTACT_INFO = {
 };
 
 export const COMPANY_INFO = {
-    name: 'Feruz', // or Glabra, checking footer/logo
-    // Add more if needed
+    name: 'Bogot Master',
 };

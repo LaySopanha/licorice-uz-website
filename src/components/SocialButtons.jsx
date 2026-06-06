@@ -1,4 +1,3 @@
-import React from 'react';
 import './SocialButtons.css';
 import { useContent } from '../context/ContentContext';
 import { CONTACT_INFO } from '../config';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../../firebase/config';
@@ -42,7 +42,6 @@ const AdminDashboard = () => {
 
     // Gallery state
     const [gallery, setGallery] = useState([]);
-    const [newGalleryUrl, setNewGalleryUrl] = useState('');
     const [galleryUploading, setGalleryUploading] = useState(false);
     const galleryInputRef = useRef();
 
@@ -634,7 +633,7 @@ const AdminDashboard = () => {
                                 <h2>Inquiries <span className="admin-count">({inquiries.length} total{unreadCount > 0 ? `, ${unreadCount} unread` : ''})</span></h2>
                             </div>
                             {inquiries.length === 0 ? (
-                                <div className="admin-empty-state">No inquiries yet. They'll appear here when visitors submit forms.</div>
+                                <div className="admin-empty-state">No inquiries yet. They&apos;ll appear here when visitors submit forms.</div>
                             ) : (
                                 <div className="admin-inquiries-list">
                                     {inquiries.map(inq => (

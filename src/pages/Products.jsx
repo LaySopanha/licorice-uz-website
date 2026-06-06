@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';
@@ -24,7 +24,7 @@ const Products = ({ addToast }) => {
 
     return (
         <Layout>
-            <SEO />
+            <SEO title={t('products_meta_title')} description={t('products_meta_desc')} />
             <div className="products-page">
                 <div className="products-page-header reveal">
                     <h1>{t('our_products')}</h1>

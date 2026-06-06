@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';
 import About from '../components/About';
@@ -7,12 +6,12 @@ import HomeCTA from '../components/HomeCTA';
 import { useLanguage } from '../context/LanguageContext';
 import { useReveal } from '../hooks/useReveal';
 
-const AboutPage = ({ addToast }) => {
+const AboutPage = () => {
     const { t, language } = useLanguage();
     useReveal();
     return (
         <Layout>
-            <SEO />
+            <SEO title={t('about_meta_title')} description={t('about_meta_desc')} />
             <div style={{ paddingTop: '30px' }}>
                 <div className="reveal"><About /></div>
                 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './Hero.css';
 import PriceModal from './PriceModal';
 import { useLanguage } from '../context/LanguageContext';
@@ -23,7 +23,7 @@ const Hero = ({ addToast }) => {
                 </button>
             </div>
             <div className="hero-image">
-                <img src="/images/hero-bg-new.webp" alt={t('hero_image_alt')} />
+                <img src="/images/hero-bg-new.webp" alt={t('hero_image_alt')} fetchPriority="high" decoding="async" />
             </div>
 
             <PriceModal

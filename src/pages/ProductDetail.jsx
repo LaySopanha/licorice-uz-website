@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';
@@ -34,9 +34,29 @@ const ProductDetail = ({ addToast }) => {
         );
     }
 
+    const siteUrl = 'https://bogotmaster.org';
+    const productImage = product.image?.startsWith('http')
+        ? product.image
+        : `${siteUrl}${product.image}`;
+    const productSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        'name': product.title,
+        'description': product.description,
+        'image': productImage,
+        'category': 'Licorice Root',
+        'brand': { '@type': 'Brand', 'name': 'Bogot Master' },
+        'manufacturer': { '@type': 'Organization', 'name': 'Bogot Master' },
+    };
+
     return (
         <Layout>
-            <SEO />
+            <SEO
+                title={`${product.title} — Bogot Master`}
+                description={product.description}
+                image={productImage}
+                structuredData={productSchema}
+            />
             <div className="product-detail-page">
                 {/* Breadcrumb */}
                 <nav className="pd-breadcrumb reveal">

@@ -1,0 +1,46 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Any signed-in user is treated as an admin (admin accounts are created
+    // manually in the Firebase Console — there is no public sign-up).
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Public catalog: anyone can read, only admins can change.
+    match /products/{slug} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Site settings (hero text, contact info, gallery): public read, admin write.
+    match /settings/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Contact / price inquiries from the public forms.
+    // Anyone may CREATE a new inquiry, but the documents (customer name,
+    // email, phone, message) must never be publicly readable. Only admins
+    // can read, update (mark read) or delete.
+    match /inquiries/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Anonymous page-view counters. The public app increments these on every
+    // navigation, so create+update are open, but only for the single
+    // `pageviews` document. Reading the aggregate is admin-only.
+    match /stats/pageviews {
+      allow create, update: if true;
+      allow read: if isAdmin();
+    }
+
+    // Everything else: denied by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

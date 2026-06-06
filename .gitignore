@@ -47,3 +47,14 @@ coverage
 *.tmp
 *.temp
 .cache
+
+# AI assistant files & one-off helper scripts (local only, not in repo)
+CLAUDE.md
+FEATURES.md
+EMAIL_SETUP.md
+fix_hero_bg.js
+rename_optimize.js
+optimize_images.js
+.claude/
+.cursor/
+AGENTS.md

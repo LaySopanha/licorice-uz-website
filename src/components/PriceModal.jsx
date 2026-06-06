@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './PriceModal.css';
 import SocialButtons from './SocialButtons';
 import { sendPriceInquiryEmail, isEmailConfigured } from '../services/emailService';
 
 import { useLanguage } from '../context/LanguageContext';
 
-const PriceModal = ({ isOpen, onClose, productTitle, onSubmitSuccess, addToast }) => {
+const PriceModal = ({ isOpen, onClose, productTitle }) => {
     const { t, language } = useLanguage();
     const [formData, setFormData] = useState({
         name: '',
