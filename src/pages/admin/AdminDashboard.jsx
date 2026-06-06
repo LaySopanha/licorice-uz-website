@@ -724,7 +724,7 @@ const AdminDashboard = () => {
                 <main className="admin-main">
 
                     {/* ── Loading skeleton (tab-aware) ──────────────────────────── */}
-                    {dataLoading && (tab === 'dashboard' || tab === 'products' || tab === 'inquiries' || tab === 'stats') && (
+                    {dataLoading && (tab === 'dashboard' || tab === 'products' || tab === 'inquiries' || tab === 'stats' || tab === 'gallery' || tab === 'settings') && (
                         <div className="admin-section">
                             {/* ── Loading Skeleton Header ── */}
                             {!(tab === 'inquiries') ? (
@@ -864,6 +864,46 @@ const AdminDashboard = () => {
                                 </div>
                                 <div className="admin-skel admin-skel-card-tall" style={{marginTop:16}} />
                                 <div className="admin-skel admin-skel-card-tall" style={{marginTop:12}} />
+                            </>)}
+
+                            {/* Gallery skeleton — upload bar + image grid */}
+                            {tab === 'gallery' && (<>
+                                <div className="admin-skeleton-header">
+                                    <div className="admin-skel admin-skel-title" style={{ width: 180 }} />
+                                    <div className="admin-skel admin-skel-btn" style={{ width: 140 }} />
+                                </div>
+                                <div className="admin-skel" style={{ height: 100, borderRadius: 12, marginBottom: 20 }} />
+                                <div className="admin-gallery-grid">
+                                    {[...Array(8)].map((_, i) => (
+                                        <div key={i} className="admin-skel" style={{ aspectRatio: '1', borderRadius: 8 }} />
+                                    ))}
+                                </div>
+                            </>)}
+
+                            {/* Settings skeleton — section cards with field rows */}
+                            {tab === 'settings' && (<>
+                                <div className="admin-skeleton-header">
+                                    <div className="admin-skel admin-skel-title" style={{ width: 120 }} />
+                                    <div className="admin-skel admin-skel-btn" style={{ width: 130 }} />
+                                </div>
+                                {[...Array(3)].map((_, ci) => (
+                                    <div key={ci} className="admin-settings-card" style={{ marginBottom: 16 }}>
+                                        <div className="admin-settings-card-head">
+                                            <div className="admin-skel" style={{ height: 16, width: 16, borderRadius: 4 }} />
+                                            <div className="admin-skel" style={{ height: 16, width: 160, borderRadius: 4 }} />
+                                        </div>
+                                        <div className="admin-fields-row" style={{ marginTop: 16 }}>
+                                            <div className="admin-field">
+                                                <div className="admin-skel" style={{ height: 12, width: 60, borderRadius: 4, marginBottom: 8 }} />
+                                                <div className="admin-skel" style={{ height: 36, borderRadius: 6 }} />
+                                            </div>
+                                            <div className="admin-field">
+                                                <div className="admin-skel" style={{ height: 12, width: 60, borderRadius: 4, marginBottom: 8 }} />
+                                                <div className="admin-skel" style={{ height: 36, borderRadius: 6 }} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </>)}
                         </div>
                     )}
