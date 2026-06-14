@@ -126,6 +126,10 @@
         display: none;
     }
 
+    .process-header {
+        margin-bottom: 60px;
+    }
+
     .process-point {
         margin-bottom: 24px;
     }

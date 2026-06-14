@@ -54,6 +54,14 @@
         padding: 60px 5%;
     }
 
+    .partners-title {
+        margin-bottom: 28px;
+    }
+
+    .partners-grid {
+        gap: 24px;
+    }
+
     .partner-logo {
         width: 120px;
         height: 50px;

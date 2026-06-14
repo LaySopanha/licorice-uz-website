@@ -30,17 +30,21 @@
 .featured-gallery-card {
     background: transparent;
     border-radius: 8px;
-    /* Reduced from 20px */
     overflow: hidden;
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.featured-gallery-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+@media (hover: hover) {
+    .featured-gallery-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .featured-gallery-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
 }
 
 .card-image {
@@ -62,8 +66,10 @@
     /* Reduced from 20px */
 }
 
-.featured-gallery-card:hover .card-image img {
-    transform: scale(1.05);
+@media (hover: hover) {
+    .featured-gallery-card:hover .card-image img {
+        transform: scale(1.05);
+    }
 }
 
 .gallery-progress-container {

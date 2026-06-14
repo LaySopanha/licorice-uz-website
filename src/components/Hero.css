@@ -84,10 +84,12 @@
     letter-spacing: 0.02em;
 }
 
-.btn-primary:hover {
-    background-position: 10% 0;
-    transform: translateY(-2px); /* Subtle lift only */
-    box-shadow: none; /* Keep shadow removed on hover */
+@media (hover: hover) {
+    .btn-primary:hover {
+        background-position: 10% 0;
+        transform: translateY(-2px);
+        box-shadow: none;
+    }
 }
 
 .btn-primary:active {

@@ -40,12 +40,7 @@
     align-items: center;
     gap: 15px;
     cursor: pointer;
-    transition: transform 0.3s;
     text-decoration: none;
-}
-
-.certificate-item:hover {
-    transform: translateY(-5px);
 }
 
 .cert-icon-box {
@@ -57,12 +52,25 @@
     align-items: center;
     justify-content: center;
     color: #333;
-    transition: all 0.3s;
 }
 
-.certificate-item:hover .cert-icon-box {
-    background: #333;
-    color: white;
+@media (hover: hover) {
+    .certificate-item {
+        transition: transform 0.3s;
+    }
+
+    .certificate-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .cert-icon-box {
+        transition: all 0.3s;
+    }
+
+    .certificate-item:hover .cert-icon-box {
+        background: #333;
+        color: white;
+    }
 }
 
 .cert-title {
@@ -89,5 +97,6 @@
 
     .certificates-container {
         padding: 30px 15px;
+        border-radius: 20px;
     }
 }

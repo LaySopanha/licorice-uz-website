@@ -24,13 +24,18 @@
     flex-direction: column;
     width: 100%;
     height: 100%;
-    transition: var(--transition-smooth);
     cursor: pointer;
     border: 1px solid rgba(0,0,0,0.08);
 }
 
-.home-product-card:hover {
-    transform: translateY(-5px);
+@media (hover: hover) {
+    .home-product-card {
+        transition: var(--transition-smooth);
+    }
+
+    .home-product-card:hover {
+        transform: translateY(-5px);
+    }
 }
 
 .home-product-image {
@@ -46,11 +51,16 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
 }
 
-.home-product-card:hover .home-product-image img {
-    transform: scale(1.05);
+@media (hover: hover) {
+    .home-product-image img {
+        transition: transform 0.5s ease;
+    }
+
+    .home-product-card:hover .home-product-image img {
+        transform: scale(1.05);
+    }
 }
 
 .home-product-content {
@@ -73,8 +83,10 @@
     transition: color 0.2s;
 }
 
-.home-product-content h3 a:hover {
-    color: var(--color-primary);
+@media (hover: hover) {
+    .home-product-content h3 a:hover {
+        color: var(--color-primary);
+    }
 }
 
 .home-product-content p {
@@ -103,10 +115,12 @@
     margin-top: auto;
 }
 
-.btn-price:hover {
-    background-color: #333;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+@media (hover: hover) {
+    .btn-price:hover {
+        background-color: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
 }
 
 .product-card-skeleton {
@@ -137,10 +151,12 @@
     transition: all 0.3s ease;
 }
 
-.btn-view-all-bottom:hover {
-    background-color: #333;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px);
+@media (hover: hover) {
+    .btn-view-all-bottom:hover {
+        background-color: #333;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
 }
 
 /* ── About snippet ────────────────────────────────────────────────────────── */
@@ -234,9 +250,11 @@
     transition: all 0.3s ease;
 }
 
-.home-about-snippet .btn-details:hover {
-    background-color: #333;
-    transform: translateY(-2px);
+@media (hover: hover) {
+    .home-about-snippet .btn-details:hover {
+        background-color: #333;
+        transform: translateY(-2px);
+    }
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */

@@ -18,9 +18,11 @@
     transition: transform 0.25s ease, background 0.25s ease;
 }
 
-.quote-fab:hover {
-    transform: scale(1.06);
-    background: var(--color-primary-dark, #3D472C);
+@media (hover: hover) {
+    .quote-fab:hover {
+        transform: scale(1.06);
+        background: var(--color-primary-dark, #3D472C);
+    }
 }
 
 .quote-fab svg {
@@ -270,6 +272,11 @@
         bottom: 16px;
         width: 52px;
         height: 52px;
+    }
+
+    .quote-cart-form input,
+    .quote-cart-form textarea {
+        font-size: 16px;
     }
 
     .quote-cart-overlay {
