@@ -1,5 +1,5 @@
 .featured-gallery-section {
-    padding: 80px 5%;
+    padding: 80px 7%;
     max-width: 100%;
     margin: 0 auto;
     background-color: #F9F9F9;
@@ -23,7 +23,7 @@
     /* 4 columns as requested by implication of "gallery" usually being denser, or stick to 3? 
        The user said "place the photos", existing gallery had 5. I'll go with 4 as a good balance for 14 images. */
     gap: 20px;
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
@@ -83,13 +83,12 @@
 
 @media (max-width: 768px) {
     .featured-gallery-section {
-        padding: 60px 0 60px 4%;
-        overflow-x: hidden;
+        padding: 60px 4%;
+        overflow: hidden;
     }
 
     .gallery-header {
         margin-bottom: 32px;
-        padding-right: 4%;
     }
 
     .gallery-header h2 {
@@ -99,7 +98,6 @@
     .featured-gallery-slider-wrapper {
         overflow: hidden;
         padding-bottom: 20px;
-        margin-right: -4%;
     }
 
     .featured-gallery-grid {

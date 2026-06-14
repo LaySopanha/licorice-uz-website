@@ -42,18 +42,17 @@ const Home = ({ addToast }) => {
             <Hero addToast={addToast} />
             <Stats />
 
-            {/* ── Featured products ────────────────────────────────────── */}
             <section className="home-products-section reveal">
-                <div className="home-products-header">
-                    <h2>{t('our_products')}</h2>
-                    <Link to="/products" className="btn-view-all">{t('view_all_products')}</Link>
+                <div className="section-header">
+                    <span className="section-label">{t('products')}</span>
+                    <h2 className="section-title">{t('our_products')}</h2>
                 </div>
                 <div className="home-products-grid">
                     {loading
                         ? Array(4).fill(0).map((_, i) => (
                             <ProductCardSkeleton key={i} />
                         ))
-                        : featuredProducts.slice(0, 4).map((product, index) => (
+                        : (featuredProducts || []).slice(0, 4).map((product, index) => (
                             <div key={product.slug} className={`reveal reveal-delay-${(index % 4) + 1}`}>
                                 <div className="home-product-card">
                                     <Link to={`/products/${product.slug}`} className="home-product-image">
@@ -83,17 +82,15 @@ const Home = ({ addToast }) => {
 
             <Process />
 
-                        {/* ── About snippet ─────────────────────────────────────────── */}
             <section className="home-about-snippet reveal">
                 <div className="home-about-inner">
-                    <h2 className="home-about-section-title">{t('about_title')}</h2>
+                    <h2 className="section-title" style={{ gridColumn: '1 / span 2', marginBottom: '40px' }}>{t('about_title')}</h2>
                     
                     <div className="home-about-images reveal reveal-delay-1">
                         <img src="/images/image16.png" alt={t('about_img_1')} loading="lazy" />
                         <img src="/images/image17.png" alt={t('about_img_2')} className="desktop-only-about-img" loading="lazy" />
                     </div>
                     <div className="home-about-text reveal reveal-delay-2">
-                        {/* Mobile layout: side-by-side portrait img + paragraphs */}
                         <div className="home-about-mobile-layout">
                             <div className="home-about-mobile-img">
                                 <img src="/images/image17.png" alt={t('about_img_2')} loading="lazy" />
@@ -104,7 +101,6 @@ const Home = ({ addToast }) => {
                             </div>
                         </div>
 
-                        {/* Desktop-only paragraphs */}
                         <p className="desktop-about-p1">{t('about_p1')}</p>
                         <p className="desktop-about-p2">{t('about_p2')}</p>
 

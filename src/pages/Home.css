@@ -1,46 +1,14 @@
 /* ── Featured products section ───────────────────────────────────────────── */
 .home-products-section {
-    padding: 80px 5%;
-    background-color: var(--color-secondary);
-}
-
-.home-products-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 48px;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-
-.home-products-header h2 {
-    font-family: var(--font-family-heading);
-    font-size: clamp(2.2rem, 4vw, 3.2rem);
-    font-weight: 700;
-    color: var(--color-text-dark);
-}
-
-.btn-view-all {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--color-primary);
-    border: 2px solid var(--color-primary);
-    padding: 10px 28px;
-    border-radius: 30px;
-    transition: all 0.3s ease;
-}
-
-.btn-view-all:hover {
-    background-color: #333;
-    border-color: #333;
-    color: #fff;
+    padding: 100px 7%;
+    background-color: #fff;
 }
 
 .home-products-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
@@ -49,7 +17,7 @@
 }
 
 .home-product-card {
-    background: #fff;
+    background: var(--color-secondary);
     border-radius: 20px;
     padding: 16px;
     display: flex;
@@ -58,7 +26,7 @@
     height: 100%;
     transition: var(--transition-smooth);
     cursor: pointer;
-    border: 1px solid rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.08);
 }
 
 .home-product-card:hover {
@@ -177,12 +145,12 @@
 
 /* ── About snippet ────────────────────────────────────────────────────────── */
 .home-about-snippet {
-    padding: 80px 5%;
-    background-color: #fff;
+    padding: 72px 7% 64px;
+    background-color: var(--color-secondary);
 }
 
 .home-about-inner {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -254,6 +222,23 @@
     font-weight: 500;
 }
 
+.home-about-snippet .btn-details {
+    display: inline-block;
+    background-color: var(--color-primary);
+    color: #fff;
+    padding: 14px 40px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-top: 12px;
+    transition: all 0.3s ease;
+}
+
+.home-about-snippet .btn-details:hover {
+    background-color: #333;
+    transform: translateY(-2px);
+}
+
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 1200px) {
     .home-products-grid {
@@ -267,12 +252,12 @@
     }
 
     .home-products-section {
-        padding: 60px 5%;
+        padding: 60px 7%;
     }
 
     /* ── About snippet tablet/mobile layout ── */
     .home-about-snippet {
-        padding: 60px 5%;
+        padding: 60px 7%;
     }
 
     .home-about-inner {

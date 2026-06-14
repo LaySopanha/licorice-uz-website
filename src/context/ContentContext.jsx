@@ -8,8 +8,8 @@ export const useContent = () => useContext(ContentContext);
 
 export const ContentProvider = ({ children }) => {
     const { language } = useLanguage();
-    const [rawProducts, setRawProducts] = useState([]);
-    const [rawSettings, setRawSettings] = useState(null);
+    const [rawProducts, setRawProducts] = useState(SEED_PRODUCTS);
+    const [rawSettings, setRawSettings] = useState(SEED_SETTINGS);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

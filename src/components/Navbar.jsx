@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import './Navbar.css';
@@ -6,26 +6,37 @@ import './Navbar.css';
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const { language, switchLanguage, t } = useLanguage();
+    const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+    const { language, languages, switchLanguage, t } = useLanguage();
+    const langDropdownRef = useRef(null);
 
-    React.useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (langDropdownRef.current && !langDropdownRef.current.contains(event.target)) {
+                setLangDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    useEffect(() => {
         document.body.style.overflow = isOpen ? 'hidden' : '';
         return () => { document.body.style.overflow = ''; };
     }, [isOpen]);
 
-    const toggleLanguage = () => {
-        switchLanguage(language === 'ru' ? 'en' : 'ru');
+    const close = () => {
+        setIsOpen(false);
+        setLangDropdownOpen(false);
     };
 
-    const close = () => setIsOpen(false);
+    const currentLang = languages.find(l => l.code === language) || languages[0];
 
     return (
         <nav className={`navbar ${scrolled ? 'scrolled' : ''} ${isOpen ? 'menu-open' : ''}`}>
@@ -36,21 +47,44 @@ const Navbar = () => {
                     </Link>
                 </div>
 
-                {/* Desktop nav links — inside nav, positioned in center grid column */}
                 <div className={`navbar-links ${isOpen ? 'active' : ''}`}>
                     <NavLink to="/" end onClick={close}>{t('home')}</NavLink>
                     <NavLink to="/products" onClick={close}>{t('products')}</NavLink>
                     <NavLink to="/about" onClick={close}>{t('about')}</NavLink>
                     <NavLink to="/contact" onClick={close}>{t('contact')}</NavLink>
-                    <button className="lang-btn-mobile" onClick={toggleLanguage}>
-                        {t('langBtn')}
-                    </button>
                 </div>
 
                 <div className="navbar-cta-container">
-                    <button className="lang-btn" onClick={toggleLanguage}>
-                        {t('langBtn')}
-                    </button>
+                    <div className="lang-dropdown-container" ref={langDropdownRef}>
+                        <button 
+                            className={`lang-dropdown-btn ${langDropdownOpen ? 'active' : ''}`}
+                            onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                            aria-label="Select language"
+                        >
+                            <span className="lang-code-current">{currentLang?.code.toUpperCase()}</span>
+                            <svg className={`chevron-icon ${langDropdownOpen ? 'rotate' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        
+                        {langDropdownOpen && (
+                            <div className="lang-dropdown-menu">
+                                {languages.map(lang => (
+                                    <button
+                                        key={lang.code}
+                                        className={`lang-dropdown-item ${language === lang.code ? 'selected' : ''}`}
+                                        onClick={() => {
+                                            switchLanguage(lang.code);
+                                            setLangDropdownOpen(false);
+                                        }}
+                                    >
+                                        <span className="lang-label-full">{lang.label}</span>
+                                        <span className="lang-code-short">{lang.code.toUpperCase()}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                     <Link to="/contact" className="btn-contact" onClick={close}>
                         {t('contactBtn')}
                     </Link>

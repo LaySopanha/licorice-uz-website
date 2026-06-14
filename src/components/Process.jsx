@@ -1,110 +1,68 @@
 import './Process.css';
 import { useLanguage } from '../context/LanguageContext';
-
-const HarvestingIcon = () => (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 9.3C18.4 17 17 18.5 11 20z" />
-        <path d="M7 20l4-4" />
-        <path d="M15 13l-3-3" />
-    </svg>
-);
-
-const ProcessingIcon = () => (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2v4" />
-        <path d="M12 18v4" />
-        <path d="M4.93 4.93l2.83 2.83" />
-        <path d="M16.24 16.24l2.83 2.83" />
-        <path d="M2 12h4" />
-        <path d="M18 12h4" />
-        <path d="M4.93 19.07l2.83-2.83" />
-        <path d="M16.24 7.76l2.83-2.83" />
-    </svg>
-);
-
-const QCIcon = () => (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-        <path d="M9 12l2 2 4-4" />
-    </svg>
-);
-
-const ExportIcon = () => (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10" />
-        <line x1="2" y1="12" x2="22" y2="12" />
-        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-    </svg>
-);
+import { Sprout, Settings2, ShieldCheck, Ship } from 'lucide-react';
 
 const Process = () => {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
 
     const steps = [
         {
-            icon: <HarvestingIcon />,
-            ru: {
-                title: 'Заготовка',
-                desc: 'Тщательный отбор корней солодки в экологически чистых районах Узбекистана.'
-            },
-            en: {
-                title: 'Harvesting',
-                desc: 'Careful selection of licorice roots in ecologically clean regions of Uzbekistan.'
-            }
+            number: '01',
+            icon: <Sprout size={40} strokeWidth={1.5} />,
+            stage: `${t('process_stage')} 01`,
+            title: t('process_1_title'),
+            desc: t('process_1_desc')
         },
         {
-            icon: <ProcessingIcon />,
-            ru: {
-                title: 'Переработка',
-                desc: 'Современные технологии очистки, сушки и нарезки по международным стандартам.'
-            },
-            en: {
-                title: 'Processing',
-                desc: 'Modern cleaning, drying, and cutting technologies according to international standards.'
-            }
+            number: '02',
+            icon: <Settings2 size={40} strokeWidth={1.5} />,
+            stage: `${t('process_stage')} 02`,
+            title: t('process_2_title'),
+            desc: t('process_2_desc')
         },
         {
-            icon: <QCIcon />,
-            ru: {
-                title: 'Контроль качества',
-                desc: 'Многоэтапная проверка каждой партии продукции перед упаковкой.'
-            },
-            en: {
-                title: 'Quality Control',
-                desc: 'Multi-stage verification of each batch of products before packaging.'
-            }
+            number: '03',
+            icon: <ShieldCheck size={40} strokeWidth={1.5} />,
+            stage: `${t('process_stage')} 03`,
+            title: t('process_3_title'),
+            desc: t('process_3_desc')
         },
         {
-            icon: <ExportIcon />,
-            ru: {
-                title: 'Экспорт',
-                desc: 'Надежная логистика и доставка продукции B2B клиентам по всему миру.'
-            },
-            en: {
-                title: 'Export',
-                desc: 'Reliable logistics and delivery of products to B2B clients worldwide.'
-            }
+            number: '04',
+            icon: <Ship size={40} strokeWidth={1.5} />,
+            stage: `${t('process_stage')} 04`,
+            title: t('process_4_title'),
+            desc: t('process_4_desc')
         }
     ];
 
     return (
-        <section className="process-section reveal">
+        <section className="process-section">
             <div className="process-container">
-                <div className="process-header">
-                    <h2>{language === 'ru' ? 'Наш процесс' : 'Our Process'}</h2>
-                    <p>{language === 'ru' ? 'Как мы обеспечиваем высшее качество нашей продукции' : 'How we ensure the highest quality of our products'}</p>
+                <div className="section-header">
+                    <span className="section-label">{t('process_label')}</span>
+                    <h2 className="section-title">{t('process_title')}</h2>
+                    <p className="section-subtitle">{t('process_subtitle')}</p>
                 </div>
-                <div className="process-steps">
-                    {steps.map((step, index) => (
-                        <div key={index} className={`process-step reveal reveal-delay-${index + 1}`}>
-                            <div className="step-icon-wrap">
-                                <div className="step-icon">{step.icon}</div>
-                                {index < steps.length - 1 && <div className="step-line"></div>}
+                
+                <div className="process-timeline">
+                    <div className="process-main-line"></div>
+                    <div className="process-items">
+                        {steps.map((step, index) => (
+                            <div key={index} className="process-item">
+                                <div className="process-point">
+                                    <div className="process-icon-box">
+                                        {step.icon}
+                                    </div>
+                                </div>
+                                <div className="process-text">
+                                    <span className="process-step-label">{step.stage}</span>
+                                    <h3>{step.title}</h3>
+                                    <p>{step.desc}</p>
+                                </div>
                             </div>
-                            <h3>{language === 'ru' ? step.ru.title : step.en.title}</h3>
-                            <p>{language === 'ru' ? step.ru.desc : step.en.desc}</p>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>
@@ -112,3 +70,4 @@ const Process = () => {
 };
 
 export default Process;
+

@@ -198,7 +198,7 @@ const Contact = ({ openPopup }) => {
                                 value={formData.email}
                                 onChange={handleChange}
                                 className={`form-input ${errors.email ? 'error' : ''}`}
-                                placeholder="global.uz@gmail.com*"
+                                placeholder={`${t('form_email_placeholder')}*`}
                             />
                             {errors.email && <span className="error-message">{errors.email}</span>}
                         </div>

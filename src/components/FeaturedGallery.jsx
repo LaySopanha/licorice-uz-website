@@ -169,7 +169,7 @@ const FeaturedGallery = () => {
                             style={{ cursor: 'pointer' }}
                         >
                             <div className="card-image">
-                                <img src={src} alt={`Gallery item ${index + 1}`} loading="lazy" />
+                                <img src={src} alt={`${t('gallery_item_alt')} ${index + 1}`} loading="lazy" />
                             </div>
                         </div>
                     ))}

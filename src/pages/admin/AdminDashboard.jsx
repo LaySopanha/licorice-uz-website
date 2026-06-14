@@ -9,11 +9,231 @@ import {
     seedDatabase, isDatabaseSeeded,
     fetchInquiries, markInquiryRead, deleteInquiry,
     fetchStats,
+    fetchTranslations, saveTranslations,
+    SEED_TRANSLATIONS,
 } from '../../firebase/firestore';
+import { useLanguage } from '../../context/LanguageContext';
 import './Admin.css';
+
+const TRANSLATION_GROUPS = [
+    {
+        id: 'nav', label: 'Navigation & UI',
+        keys: [
+            { key: 'home', label: 'Home link' },
+            { key: 'products', label: 'Products link' },
+            { key: 'about', label: 'About link' },
+            { key: 'contact', label: 'Contact link' },
+            { key: 'contactBtn', label: 'Contact button' },
+            { key: 'read_more', label: 'Read more' },
+        ],
+    },
+    {
+        id: 'hero', label: 'Hero',
+        keys: [
+            { key: 'hero_cta', label: 'CTA button' },
+            { key: 'hero_modal_title', label: 'Modal title' },
+            { key: 'hero_image_alt', label: 'Image alt text' },
+        ],
+    },
+    {
+        id: 'about', label: 'About Section',
+        keys: [
+            { key: 'about_title', label: 'Section title' },
+            { key: 'about_p1', label: 'Paragraph 1', multiline: true },
+            { key: 'about_p2', label: 'Paragraph 2', multiline: true },
+            { key: 'about_p3', label: 'Paragraph 3', multiline: true },
+            { key: 'about_p4', label: 'Paragraph 4', multiline: true },
+            { key: 'about_benefit_1', label: 'Benefit 1' },
+            { key: 'about_benefit_2', label: 'Benefit 2' },
+            { key: 'about_benefit_3', label: 'Benefit 3' },
+            { key: 'about_benefit_4', label: 'Benefit 4' },
+            { key: 'about_img_1', label: 'Image Alt 1' },
+            { key: 'about_img_2', label: 'Image Alt 2' },
+            { key: 'about_img_3', label: 'Image Alt 3' },
+            { key: 'about_extra_stat_tons', label: 'Extra stat: Tons' },
+            { key: 'about_extra_stat_staff', label: 'Extra stat: Staff' },
+            { key: 'consultation_title', label: 'Consultation title' },
+        ],
+    },
+    {
+        id: 'stats', label: 'Home Stats',
+        keys: [
+            { key: 'stat_years', label: 'Years on market' },
+            { key: 'stat_tons', label: 'Tons annually' },
+            { key: 'stat_experts', label: 'Experts' },
+            { key: 'stat_clients', label: 'B2B Clients' },
+        ],
+    },
+    {
+        id: 'process', label: 'Process Section',
+        keys: [
+            { key: 'process_label', label: 'Small label' },
+            { key: 'process_title', label: 'Section title' },
+            { key: 'process_subtitle', label: 'Subtitle', multiline: true },
+            { key: 'process_stage', label: 'Stage label (e.g. Stage/Этап)' },
+            { key: 'process_1_title', label: 'Step 1 Title' },
+            { key: 'process_1_desc', label: 'Step 1 Desc', multiline: true },
+            { key: 'process_2_title', label: 'Step 2 Title' },
+            { key: 'process_2_desc', label: 'Step 2 Desc', multiline: true },
+            { key: 'process_3_title', label: 'Step 3 Title' },
+            { key: 'process_3_desc', label: 'Step 3 Desc', multiline: true },
+            { key: 'process_4_title', label: 'Step 4 Title' },
+            { key: 'process_4_desc', label: 'Step 4 Desc', multiline: true },
+        ],
+    },
+    {
+        id: 'products', label: 'Products Section',
+        keys: [
+            { key: 'our_products', label: 'Section heading' },
+            { key: 'view_all_products', label: 'View all button' },
+            { key: 'related_products', label: 'Related heading' },
+            { key: 'get_price', label: 'Get price button' },
+            { key: 'specifications', label: 'Specifications heading' },
+            { key: 'spec_identity', label: 'Spec: Identity' },
+            { key: 'spec_physical', label: 'Spec: Physical' },
+            { key: 'spec_quality', label: 'Spec: Quality' },
+            { key: 'spec_microbiology', label: 'Spec: Microbiology' },
+            { key: 'spec_storage_shelf', label: 'Spec: Storage & Shelf Life' },
+            { key: 'spec_botanical_name', label: 'Label: Botanical name' },
+            { key: 'spec_origin', label: 'Label: Origin' },
+            { key: 'spec_part_used', label: 'Label: Part used' },
+            { key: 'spec_cultivation', label: 'Label: Cultivation' },
+            { key: 'spec_form_cut_type', label: 'Label: Form / cut type' },
+            { key: 'spec_cut_size', label: 'Label: Cut size' },
+            { key: 'spec_diameter_grade', label: 'Label: Diameter grade' },
+            { key: 'spec_processing', label: 'Label: Processing' },
+            { key: 'spec_packaging', label: 'Label: Packaging' },
+            { key: 'spec_moq', label: 'Label: MOQ' },
+            { key: 'spec_moisture', label: 'Label: Moisture' },
+            { key: 'spec_ash', label: 'Label: Ash' },
+            { key: 'spec_glycyrrhizin', label: 'Label: Glycyrrhizin' },
+            { key: 'spec_foreign_matter', label: 'Label: Foreign matter' },
+            { key: 'spec_heavy_metals', label: 'Label: Heavy metals' },
+            { key: 'spec_pesticide_residues', label: 'Label: Pesticide residues' },
+            { key: 'spec_tpc', label: 'Label: TPC' },
+            { key: 'spec_yeast_mould', label: 'Label: Yeast & Mould' },
+            { key: 'spec_e_coli', label: 'Label: E. coli' },
+            { key: 'spec_salmonella', label: 'Label: Salmonella' },
+            { key: 'spec_shelf_life', label: 'Label: Shelf life' },
+            { key: 'spec_storage', label: 'Label: Storage' },
+        ],
+    },
+    {
+        id: 'contact', label: 'Contact & Form',
+        keys: [
+            { key: 'contact_title', label: 'Section title' },
+            { key: 'contact_cta_title', label: 'CTA title' },
+            { key: 'contact_cta_text', label: 'CTA text' },
+            { key: 'contact_cta_btn', label: 'CTA button' },
+            { key: 'contact_address', label: 'Address label' },
+            { key: 'address_line_1', label: 'Address line 1' },
+            { key: 'address_line_2', label: 'Address line 2' },
+            { key: 'contact_phone', label: 'Phone label' },
+            { key: 'contact_email', label: 'Email label' },
+            { key: 'contact_website', label: 'Website label' },
+            { key: 'form_name', label: 'Name field label' },
+            { key: 'form_name_placeholder', label: 'Name placeholder' },
+            { key: 'form_email', label: 'Email field label' },
+            { key: 'form_email_placeholder', label: 'Email placeholder' },
+            { key: 'form_email_error', label: 'Email required error' },
+            { key: 'form_email_invalid', label: 'Email invalid error' },
+            { key: 'form_comment', label: 'Comment field label' },
+            { key: 'form_submit', label: 'Submit button' },
+            { key: 'form_sending', label: 'Sending state' },
+            { key: 'form_success', label: 'Success message' },
+            { key: 'form_error', label: 'Error message' },
+            { key: 'social_msg_product', label: 'Social message (product)' },
+            { key: 'social_msg_general', label: 'Social message (general)' },
+        ],
+    },
+    {
+        id: 'certs', label: 'Certificates',
+        keys: [
+            { key: 'certificates_title', label: 'Section title' },
+            { key: 'documentation_label', label: 'Small label' },
+            { key: 'cert_1', label: 'Certificate 1' },
+            { key: 'cert_2', label: 'Certificate 2' },
+            { key: 'cert_3', label: 'Certificate 3' },
+            { key: 'cert_4', label: 'Certificate 4' },
+        ],
+    },
+    {
+        id: 'gallery', label: 'Gallery & Partners',
+        keys: [
+            { key: 'gallery_title', label: 'Gallery title' },
+            { key: 'gallery_item_alt', label: 'Image Alt Text' },
+            { key: 'partners_label', label: 'Partners small label' },
+            { key: 'partners_title', label: 'Partners title' },
+            { key: 'partner_alt', label: 'Partner Alt Text' },
+        ],
+    },
+    {
+        id: 'footer', label: 'Footer',
+        keys: [
+            { key: 'footer_slogan', label: 'Slogan' },
+            { key: 'footer_quick_links', label: 'Quick links heading' },
+            { key: 'footer_contact_us', label: 'Contact us heading' },
+            { key: 'footer_rights', label: 'Rights text' },
+        ],
+    },
+    {
+        id: 'quote', label: 'Quote Cart',
+        keys: [
+            { key: 'quote_add', label: 'Add to quote button' },
+            { key: 'quote_added', label: 'Added state' },
+            { key: 'quote_cart_title', label: 'Cart title' },
+            { key: 'quote_empty', label: 'Empty state' },
+            { key: 'quote_qty_placeholder', label: 'Quantity placeholder' },
+            { key: 'quote_remove', label: 'Remove button' },
+            { key: 'quote_clear', label: 'Clear list button' },
+            { key: 'quote_company', label: 'Company field label' },
+            { key: 'quote_submit', label: 'Submit button' },
+            { key: 'quote_success', label: 'Success message' },
+        ],
+    },
+    {
+        id: 'modals', label: 'Price Modal',
+        keys: [
+            { key: 'modal_price_title', label: 'Price request title' },
+            { key: 'modal_info_title', label: 'Info request title' },
+            { key: 'modal_phone', label: 'Phone label' },
+            { key: 'modal_phone_error', label: 'Phone required error' },
+            { key: 'modal_phone_invalid', label: 'Phone invalid error' },
+            { key: 'modal_quantity', label: 'Quantity label' },
+            { key: 'modal_quantity_error', label: 'Quantity error' },
+            { key: 'modal_quantity_placeholder', label: 'Quantity placeholder' },
+            { key: 'modal_comment_placeholder', label: 'Comment placeholder' },
+            { key: 'modal_submit', label: 'Submit button' },
+            { key: 'modal_success_title', label: 'Success title' },
+            { key: 'modal_success', label: 'Success message' },
+            { key: 'modal_error', label: 'Error message' },
+        ],
+    },
+    {
+        id: 'seo', label: 'SEO & Meta',
+        keys: [
+            { key: 'meta_title', label: 'Home meta title' },
+            { key: 'meta_description', label: 'Home meta description', multiline: true },
+            { key: 'meta_keywords', label: 'Home meta keywords' },
+            { key: 'og_title', label: 'OG title' },
+            { key: 'og_description', label: 'OG description', multiline: true },
+            { key: 'schema_description', label: 'Schema description', multiline: true },
+            { key: 'products_meta_title', label: 'Products page title' },
+            { key: 'products_meta_desc', label: 'Products page desc', multiline: true },
+            { key: 'about_meta_title', label: 'About page title' },
+            { key: 'about_meta_desc', label: 'About page desc', multiline: true },
+            { key: 'contact_meta_title', label: 'Contact page title' },
+            { key: 'contact_meta_desc', label: 'Contact page desc', multiline: true },
+            { key: 'notfound_heading', label: '404 heading' },
+            { key: 'notfound_text', label: '404 text' },
+            { key: 'notfound_home', label: '404 home link' },
+        ],
+    },
+];
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
+    const { refreshTranslations } = useLanguage();
     const [user, setUser] = useState(null);
     const [authChecked, setAuthChecked] = useState(false);
     const [tab, setTab] = useState(() => sessionStorage.getItem('admin_tab') || 'dashboard');
@@ -33,6 +253,16 @@ const AdminDashboard = () => {
     // Settings state
     const [settings, setSettings] = useState({});
     const [settingsSaving, setSettingsSaving] = useState(false);
+
+    // Translations / Languages state
+    const [adminTranslations, setAdminTranslations] = useState(SEED_TRANSLATIONS);
+    const [translationsSaving, setTranslationsSaving] = useState(false);
+    const [translationsDirty, setTranslationsDirty] = useState(false);
+    const [transLangTab, setTransLangTab] = useState('');
+    const [prodLangTab, setProdLangTab] = useState('');
+    const [openGroups, setOpenGroups] = useState({});
+    const [newLangForm, setNewLangForm] = useState({ code: '', label: '', name: '' });
+    const [showAddLangModal, setShowAddLangModal] = useState(false);
 
     // Inquiries state
     const [inquiries, setInquiries] = useState([]);
@@ -60,6 +290,7 @@ const AdminDashboard = () => {
     // Seed state
     const [seeding, setSeeding] = useState(false);
     const [seedMsg, setSeedMsg] = useState('');
+    const [chartHoverIndex, setChartHoverIndex] = useState(null);
 
     // Custom confirm state
     const [confirmModal, setConfirmModal] = useState({
@@ -135,19 +366,23 @@ const AdminDashboard = () => {
     const loadData = async () => {
         setDataLoading(true);
         try {
-            const [prodsR, setsR, inqsR, statsR] = await Promise.allSettled([
-                fetchProducts(), fetchSettings(), fetchInquiries(), fetchStats(),
+            const [prodsR, setsR, inqsR, statsR, transR] = await Promise.allSettled([
+                fetchProducts(), fetchSettings(), fetchInquiries(), fetchStats(), fetchTranslations(),
             ]);
             const prods = prodsR.status === 'fulfilled' ? (prodsR.value || []) : [];
             const sets  = setsR.status  === 'fulfilled' ? (setsR.value  || {}) : {};
             const inqs  = inqsR.status  === 'fulfilled' ? (inqsR.value  || []) : [];
             const sts   = statsR.status === 'fulfilled' ? (statsR.value || { total: 0, paths: {} }) : { total: 0, paths: {} };
+            const trans = transR.status === 'fulfilled' && transR.value ? transR.value : SEED_TRANSLATIONS;
             setProducts(prods);
             setSettings(sets);
             setInquiries(inqs);
             setStats(sts);
             setGallery(sets.gallery || []);
-            const failures = [prodsR, setsR, inqsR, statsR].filter(r => r.status === 'rejected');
+            setAdminTranslations(trans);
+            setTranslationsDirty(false);
+            setTransLangTab(trans.languages?.[0]?.code || 'ru');
+            const failures = [prodsR, setsR, inqsR, statsR, transR].filter(r => r.status === 'rejected');
             if (failures.length) showToast(`Warning: ${failures.length} data source(s) failed to load. Check console.`);
             failures.forEach(r => console.error('[loadData]', r.reason));
         } finally {
@@ -162,10 +397,13 @@ const AdminDashboard = () => {
 
     // ── Products ──────────────────────────────────────────────────────────────
 
+    const firstLangCode = () => adminTranslations.languages?.[0]?.code || 'ru';
+
     const startEdit = (product) => {
         setEditingProduct(product.slug);
         setIsAdding(false);
         setProductForm({ ...product });
+        setProdLangTab(firstLangCode());
         setImageFile(null);
         setImagePreview(product.image);
     };
@@ -173,15 +411,43 @@ const AdminDashboard = () => {
     const startAdd = () => {
         setIsAdding(true);
         setEditingProduct(null);
+        setProdLangTab(firstLangCode());
+        const langs = adminTranslations.languages || [{ code: 'ru' }, { code: 'en' }];
+        const langFields = {};
+        langs.forEach(lang => {
+            langFields[`title_${lang.code}`] = '';
+            langFields[`desc_${lang.code}`] = '';
+        });
         setProductForm({
             slug: '',
-            title_ru: '',
-            title_en: '',
-            desc_ru: '',
-            desc_en: '',
+            ...langFields,
             featured: false,
             order: products.length > 0 ? Math.max(...products.map(p => p.order || 0)) + 1 : 1,
-            image: ''
+            image: '',
+            specs: {
+                botanical_name: 'Glycyrrhiza glabra',
+                origin: 'Uzbekistan',
+                part_used: 'Root',
+                cultivation: 'Wild + artificial',
+                form_cut_type: '',
+                cut_size: '',
+                diameter_grade: '',
+                processing: '',
+                packaging: 'PP bags 25 kg',
+                moq: '',
+                moisture: '≤ 8%',
+                ash: '≤ 9%',
+                glycyrrhizin: '',
+                foreign_matter: '≤ 1%',
+                heavy_metals: 'Within WHO/EU limits',
+                pesticide_residues: 'Within WHO/EU limits',
+                tpc: '≤ 100,000 CFU/g',
+                yeast_mould: '≤ 1,000 CFU/g',
+                e_coli: 'Absent',
+                salmonella: 'Absent',
+                shelf_life: '24 months',
+                storage: '≤ 25°C, cool dry, no sunlight',
+            }
         });
         setImageFile(null);
         setImagePreview('');
@@ -194,6 +460,74 @@ const AdminDashboard = () => {
         setImageFile(null);
         setImagePreview('');
     };
+
+    const handleSpecChange = (key, value) => {
+        setProductForm(p => ({ ...p, specs: { ...p.specs, [key]: value } }));
+    };
+
+    // ── Translations ──────────────────────────────────────────────────────────
+
+    const handleTranslationChange = (langCode, key, value) => {
+        setTranslationsDirty(true);
+        setAdminTranslations(prev => ({
+            ...prev,
+            [langCode]: { ...(prev[langCode] || {}), [key]: value },
+        }));
+    };
+
+    const saveTranslationsData = async () => {
+        setTranslationsSaving(true);
+        try {
+            await saveTranslations(adminTranslations);
+            await refreshTranslations();
+            setTranslationsDirty(false);
+            showToast('Translations saved.');
+        } catch {
+            showToast('Error saving translations.');
+        } finally {
+            setTranslationsSaving(false);
+        }
+    };
+
+    const addLanguage = async () => {
+        const code = newLangForm.code.trim().toLowerCase();
+        const label = newLangForm.label.trim().toUpperCase();
+        const name = newLangForm.name.trim();
+        if (!code || !label || !name) { showToast('Fill in code, label, and name.'); return; }
+        if (adminTranslations.languages?.some(l => l.code === code)) { showToast('Language code already exists.'); return; }
+        const newLangs = [...(adminTranslations.languages || []), { code, label, name }];
+        const enStrings = adminTranslations.en || SEED_TRANSLATIONS.en || {};
+        const next = {
+            ...adminTranslations,
+            languages: newLangs,
+            [code]: { ...enStrings },
+        };
+        setAdminTranslations(next);
+        setTransLangTab(code);
+        setNewLangForm({ code: '', label: '', name: '' });
+        setShowAddLangModal(false);
+        try {
+            await saveTranslations(next);
+            await refreshTranslations();
+            showToast(`Language "${name}" added. Translate the strings then save.`);
+        } catch {
+            showToast(`Language "${name}" added locally but failed to save. Click "Save All".`);
+        }
+    };
+
+    const removeLanguage = (code) => {
+        if (adminTranslations.languages?.length <= 1) { showToast('Cannot remove the last language.'); return; }
+        const newLangs = (adminTranslations.languages || []).filter(l => l.code !== code);
+        setTranslationsDirty(true);
+        setAdminTranslations(prev => {
+            const next = { ...prev, languages: newLangs };
+            delete next[code];
+            return next;
+        });
+        if (transLangTab === code) setTransLangTab(newLangs[0]?.code || '');
+    };
+
+    const toggleGroup = (id) => setOpenGroups(prev => ({ ...prev, [id]: !prev[id] }));
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -521,11 +855,13 @@ const AdminDashboard = () => {
     const last14Days = useMemo(() => {
         const days = [];
         const now = new Date();
+        const locale = navigator.language || 'ru-RU';
         for (let i = 13; i >= 0; i--) {
             const d = new Date(now);
             d.setDate(now.getDate() - i);
             const key = d.toISOString().slice(0, 10);
-            days.push({ key, label: `${d.getDate()}/${d.getMonth() + 1}`, count: 0 });
+            const fullDate = d.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
+            days.push({ key, label: `${d.getDate()}/${d.getMonth() + 1}`, fullDate, count: 0 });
         }
         const map = Object.fromEntries(days.map(d => [d.key, d]));
         inquiries.forEach(inq => {
@@ -608,6 +944,52 @@ const AdminDashboard = () => {
 
     return (
         <div className="admin-dashboard">
+            {/* Add Language Modal */}
+            {showAddLangModal && (
+                <div className="admin-modal-overlay" onClick={() => setShowAddLangModal(false)}>
+                    <div className="admin-confirm-modal admin-add-lang-modal" onClick={e => e.stopPropagation()}>
+                        <h3>Add New Language</h3>
+                        <p style={{ color: '#8a8576', fontSize: '0.875rem', margin: '0 0 20px' }}>
+                            New language inherits English strings as a starting point.
+                        </p>
+                        <div className="admin-field">
+                            <label>Code <span className="admin-field-hint">2-letter ISO, e.g. uz</span></label>
+                            <input
+                                autoFocus
+                                value={newLangForm.code}
+                                onChange={e => setNewLangForm(f => ({ ...f, code: e.target.value }))}
+                                placeholder="uz"
+                                maxLength={5}
+                                onKeyDown={e => e.key === 'Enter' && addLanguage()}
+                            />
+                        </div>
+                        <div className="admin-field">
+                            <label>Label <span className="admin-field-hint">shown in navbar</span></label>
+                            <input
+                                value={newLangForm.label}
+                                onChange={e => setNewLangForm(f => ({ ...f, label: e.target.value }))}
+                                placeholder="UZ"
+                                maxLength={5}
+                                onKeyDown={e => e.key === 'Enter' && addLanguage()}
+                            />
+                        </div>
+                        <div className="admin-field">
+                            <label>Name <span className="admin-field-hint">full language name</span></label>
+                            <input
+                                value={newLangForm.name}
+                                onChange={e => setNewLangForm(f => ({ ...f, name: e.target.value }))}
+                                placeholder="O'zbek"
+                                onKeyDown={e => e.key === 'Enter' && addLanguage()}
+                            />
+                        </div>
+                        <div className="admin-confirm-actions" style={{ marginTop: 24 }}>
+                            <button className="admin-btn-secondary" onClick={() => setShowAddLangModal(false)}>Cancel</button>
+                            <button className="admin-btn-primary" onClick={addLanguage}>Add Language</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Custom Confirmation Modal */}
             {confirmModal.isOpen && (
                 <div className="admin-modal-overlay" onClick={() => { setConfirmModal({ ...confirmModal, isOpen: false }); setConfirmInput(''); }}>
@@ -716,6 +1098,13 @@ const AdminDashboard = () => {
                         >
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                             <span>Settings</span>
+                        </button>
+                        <button
+                            className={`admin-tab-btn ${tab === 'languages' ? 'active' : ''}`}
+                            onClick={() => setTabPersist('languages')}
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            <span>Languages</span>
                         </button>
                     </div>
                 </aside>
@@ -954,41 +1343,98 @@ const AdminDashboard = () => {
                                         <span className="admin-card-meta">{last14Days.reduce((s, d) => s + d.count, 0)} total</span>
                                     </div>
                                     {(() => {
-                                        const W = 700, H = 160;
-                                        const padT = 24, padB = 28, padL = 6, padR = 6;
+                                        const W = 700, H = 200;
+                                        const padT = 40, padB = 40, padL = 30, padR = 30;
                                         const cW = W - padL - padR;
                                         const cH = H - padT - padB;
                                         const n = last14Days.length;
+                                        const maxDay = Math.max(...last14Days.map(d => d.count));
                                         const max = Math.max(maxDay, 1);
                                         const px = i => padL + (n < 2 ? cW / 2 : (i / (n - 1)) * cW);
                                         const py = v => padT + (1 - v / max) * cH;
-                                        const pts = last14Days.map((d, i) => `${px(i)},${py(d.count)}`).join(' ');
-                                        const area = `${px(0)},${py(0)} ${pts} ${px(n - 1)},${py(0)}`;
+
+                                        // Straight lines for data precision
+                                        const points = last14Days.map((d, i) => ({ x: px(i), y: py(d.count) }));
+                                        const pts = points.map(p => `${p.x},${p.y}`).join(' ');
+                                        const areaPath = `M ${px(0)} ${py(0)} L ${pts} L ${px(n - 1)} ${py(0)} Z`;
+
+                                        const handleMouseMove = (e) => {
+                                            const svg = e.currentTarget;
+                                            const rect = svg.getBoundingClientRect();
+                                            const x = ((e.clientX - rect.left) / rect.width) * W;
+                                            const closestIndex = Math.round(((x - padL) / cW) * (n - 1));
+                                            if (closestIndex >= 0 && closestIndex < n) {
+                                                setChartHoverIndex(closestIndex);
+                                            }
+                                        };
+
+                                        const hoverData = chartHoverIndex !== null ? last14Days[chartHoverIndex] : null;
+
                                         return (
-                                            <svg viewBox={`0 0 ${W} ${H}`} className="admin-linechart">
-                                                <defs>
-                                                    <linearGradient id="lc-fill" x1="0" y1="0" x2="0" y2="1">
-                                                        <stop offset="0%" stopColor="#515E3B" stopOpacity="0.15" />
-                                                        <stop offset="100%" stopColor="#515E3B" stopOpacity="0" />
-                                                    </linearGradient>
-                                                </defs>
-                                                {/* baseline */}
-                                                <line x1={padL} y1={py(0)} x2={W - padR} y2={py(0)} stroke="#f0ede8" strokeWidth="1" />
-                                                {/* fill */}
-                                                <polygon points={area} fill="url(#lc-fill)" />
-                                                {/* line */}
-                                                <polyline points={pts} fill="none" stroke="#515E3B" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-                                                {/* dots + labels */}
-                                                {last14Days.map((d, i) => (
-                                                    <g key={d.key}>
-                                                        <circle cx={px(i)} cy={py(d.count)} r="3.5" fill="#515E3B" />
-                                                        {d.count > 0 && (
-                                                            <text x={px(i)} y={py(d.count) - 8} textAnchor="middle" fontSize="10" fill="#515E3B" fontWeight="700">{d.count}</text>
-                                                        )}
-                                                        <text x={px(i)} y={H - 6} textAnchor="middle" fontSize="9" fill="#bbb">{d.label}</text>
-                                                    </g>
-                                                ))}
-                                            </svg>
+                                            <div style={{ position: 'relative' }}>
+                                                <svg 
+                                                    viewBox={`0 0 ${W} ${H}`} 
+                                                    className="admin-linechart-interactive"
+                                                    onMouseMove={handleMouseMove}
+                                                    onMouseLeave={() => setChartHoverIndex(null)}
+                                                >
+                                                    <defs>
+                                                        <linearGradient id="lc-fill" x1="0" y1="0" x2="0" y2="1">
+                                                            <stop offset="0%" stopColor="#515E3B" stopOpacity="0.1" />
+                                                            <stop offset="100%" stopColor="#515E3B" stopOpacity="0" />
+                                                        </linearGradient>
+                                                    </defs>
+
+                                                    {/* Grid lines */}
+                                                    {[0, 0.5, 1].map(v => (
+                                                        <line 
+                                                            key={v}
+                                                            x1={padL} y1={py(max * v)} x2={W - padR} y2={py(max * v)} 
+                                                            stroke="#f0ede8" strokeWidth="1" 
+                                                        />
+                                                    ))}
+
+                                                    {/* Area fill */}
+                                                    <path d={areaPath} fill="url(#lc-fill)" />
+                                                    
+                                                    {/* Main line */}
+                                                    <polyline points={pts} fill="none" stroke="#515E3B" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+
+                                                    {/* Interaction Layer */}
+                                                    {chartHoverIndex !== null && (
+                                                        <g>
+                                                            <line 
+                                                                x1={px(chartHoverIndex)} y1={padT - 10} 
+                                                                x2={px(chartHoverIndex)} y2={H - padB} 
+                                                                stroke="#515E3B" strokeWidth="1" strokeOpacity="0.3" 
+                                                            />
+                                                            <circle 
+                                                                cx={px(chartHoverIndex)} cy={py(hoverData.count)} 
+                                                                r="4" fill="#fff" stroke="#515E3B" strokeWidth="2" 
+                                                            />
+                                                        </g>
+                                                    )}
+
+                                                    {/* X-Axis labels */}
+                                                    {last14Days.map((d, i) => (i % 2 === 0 || i === n - 1) && (
+                                                        <text key={d.key} x={px(i)} y={H - 12} textAnchor="middle" fontSize="10" fill="#999" fontWeight="500">
+                                                            {d.label}
+                                                        </text>
+                                                    ))}
+                                                </svg>
+
+                                                {/* Tooltip */}
+                                                {chartHoverIndex !== null && (
+                                                    <div className="admin-chart-tooltip" style={{
+                                                        left: `${(px(chartHoverIndex) / W) * 100}%`,
+                                                        top: `${(py(hoverData.count) / H) * 100}%`,
+                                                        transform: `translate(-50%, -120%)`
+                                                    }}>
+                                                        <div className="admin-tooltip-val">{hoverData.count} inquiries</div>
+                                                        <div className="admin-tooltip-date">{hoverData.fullDate}</div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         );
                                     })()}
                                 </div>
@@ -1140,79 +1586,208 @@ const AdminDashboard = () => {
                                             {imageFile && <p className="admin-filename">{imageFile.name}</p>}
 
                                             <div className="admin-form-meta">
-                                                <div className="admin-field">
-                                                    <label>Slug <span className="admin-field-hint">{isAdding ? 'used in URL' : 'cannot change'}</span></label>
-                                                    <input
-                                                        value={productForm.slug || ''}
-                                                        onChange={e => setProductForm(p => ({ ...p, slug: e.target.value }))}
-                                                        disabled={!isAdding}
-                                                        placeholder="e.g. licorice-root"
-                                                    />
+                                                <div className="admin-fields-row">
+                                                    <div className="admin-field">
+                                                        <label>Slug <span className="admin-field-hint">{isAdding ? 'used' : ''}</span></label>
+                                                        <input
+                                                            value={productForm.slug || ''}
+                                                            onChange={e => setProductForm(p => ({ ...p, slug: e.target.value }))}
+                                                            disabled={!isAdding}
+                                                            placeholder="e.g. root"
+                                                        />
+                                                    </div>
+                                                    <div className="admin-field">
+                                                        <label>Order</label>
+                                                        <input
+                                                            type="number"
+                                                            value={productForm.order || ''}
+                                                            onChange={e => setProductForm(p => ({ ...p, order: parseInt(e.target.value) || 0 }))}
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div className="admin-field">
-                                                    <label>Display Order</label>
-                                                    <input
-                                                        type="number"
-                                                        value={productForm.order || ''}
-                                                        onChange={e => setProductForm(p => ({ ...p, order: parseInt(e.target.value) || 0 }))}
-                                                    />
-                                                </div>
-                                            </div>
 
-                                            <label className="admin-toggle-row">
-                                                <div className="admin-toggle-switch">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={!!productForm.featured}
-                                                        onChange={e => setProductForm(p => ({ ...p, featured: e.target.checked }))}
-                                                    />
-                                                    <span className="admin-toggle-track" />
-                                                </div>
-                                                <div className="admin-toggle-text">
-                                                    <span>Featured on Home</span>
-                                                    <small>Show in the 4-product section</small>
-                                                </div>
-                                            </label>
+                                                <label className="admin-toggle-row">
+                                                    <div className="admin-toggle-switch">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={!!productForm.featured}
+                                                            onChange={e => setProductForm(p => ({ ...p, featured: e.target.checked }))}
+                                                        />
+                                                        <span className="admin-toggle-track" />
+                                                    </div>
+                                                    <div className="admin-toggle-text">
+                                                        <span>Featured on Home</span>
+                                                        <small>Show in the 4-product section</small>
+                                                    </div>
+                                                </label>
+                                            </div>
                                         </div>
 
                                         {/* Right panel — titles + descriptions */}
                                         <div className="admin-form-fields">
-                                            <p className="admin-form-section-label">Titles</p>
-                                            <div className="admin-field">
-                                                <label>Russian <span className="admin-field-lang">RU</span></label>
-                                                <input
-                                                    value={productForm.title_ru || ''}
-                                                    onChange={e => setProductForm(p => ({ ...p, title_ru: e.target.value }))}
-                                                    placeholder="Название на русском"
-                                                />
+                                            {(() => {
+                                                const langs = adminTranslations.languages || [{ code: 'ru', label: 'RU', name: 'Russian' }, { code: 'en', label: 'EN', name: 'English' }];
+                                                const activeLang = langs.find(l => l.code === prodLangTab) || langs[0];
+                                                const code = activeLang.code;
+                                                return (
+                                                    <>
+                                                        <p className="admin-form-section-label">Translations</p>
+                                                        {/* Language picker — one language at a time keeps the form tidy with many languages */}
+                                                        <div className="admin-field admin-prod-lang-select">
+                                                            <label>Editing language</label>
+                                                            <select
+                                                                value={code}
+                                                                onChange={e => setProdLangTab(e.target.value)}
+                                                            >
+                                                                {langs.map(lang => (
+                                                                    <option key={lang.code} value={lang.code}>
+                                                                        {lang.name} ({lang.label})
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+
+                                                        <div className="admin-field">
+                                                            <label>Title <span className="admin-field-lang">{activeLang.name}</span></label>
+                                                            <input
+                                                                value={productForm[`title_${code}`] || ''}
+                                                                onChange={e => setProductForm(p => ({ ...p, [`title_${code}`]: e.target.value }))}
+                                                                placeholder={`Title in ${activeLang.name}`}
+                                                            />
+                                                        </div>
+                                                        <div className="admin-field">
+                                                            <label>Description <span className="admin-field-lang">{activeLang.name}</span></label>
+                                                            <textarea
+                                                                rows={4}
+                                                                value={productForm[`desc_${code}`] || ''}
+                                                                onChange={e => setProductForm(p => ({ ...p, [`desc_${code}`]: e.target.value }))}
+                                                                placeholder={`Description in ${activeLang.name}`}
+                                                            />
+                                                        </div>
+                                                    </>
+                                                );
+                                            })()}
+
+                                            <p className="admin-form-section-label">Specifications</p>
+
+                                            <p className="admin-form-section-sublabel">Identity</p>
+                                            <div className="admin-fields-row">
+                                                <div className="admin-field">
+                                                    <label>Botanical name</label>
+                                                    <input value={productForm.specs?.botanical_name || ''} onChange={e => handleSpecChange('botanical_name', e.target.value)} placeholder="Glycyrrhiza glabra" />
+                                                </div>
+                                                <div className="admin-field">
+                                                    <label>Origin</label>
+                                                    <input value={productForm.specs?.origin || ''} onChange={e => handleSpecChange('origin', e.target.value)} placeholder="Uzbekistan" />
+                                                </div>
                                             </div>
-                                            <div className="admin-field">
-                                                <label>English <span className="admin-field-lang">EN</span></label>
-                                                <input
-                                                    value={productForm.title_en || ''}
-                                                    onChange={e => setProductForm(p => ({ ...p, title_en: e.target.value }))}
-                                                    placeholder="Product title in English"
-                                                />
+                                            <div className="admin-fields-row">
+                                                <div className="admin-field">
+                                                    <label>Part used</label>
+                                                    <input value={productForm.specs?.part_used || ''} onChange={e => handleSpecChange('part_used', e.target.value)} placeholder="Root" />
+                                                </div>
+                                                <div className="admin-field">
+                                                    <label>Cultivation</label>
+                                                    <input value={productForm.specs?.cultivation || ''} onChange={e => handleSpecChange('cultivation', e.target.value)} placeholder="Wild + artificial" />
+                                                </div>
                                             </div>
 
-                                            <p className="admin-form-section-label">Descriptions</p>
-                                            <div className="admin-field">
-                                                <label>Russian <span className="admin-field-lang">RU</span></label>
-                                                <textarea
-                                                    rows={5}
-                                                    value={productForm.desc_ru || ''}
-                                                    onChange={e => setProductForm(p => ({ ...p, desc_ru: e.target.value }))}
-                                                    placeholder="Описание на русском"
-                                                />
+                                            <p className="admin-form-section-sublabel">Physical</p>
+                                            <div className="admin-fields-row">
+                                                <div className="admin-field">
+                                                    <label>Form / cut type</label>
+                                                    <input value={productForm.specs?.form_cut_type || ''} onChange={e => handleSpecChange('form_cut_type', e.target.value)} placeholder="e.g. Fingers, Sticks, Powder" />
+                                                </div>
+                                                <div className="admin-field">
+                                                    <label>Cut size / length</label>
+                                                    <input value={productForm.specs?.cut_size || ''} onChange={e => handleSpecChange('cut_size', e.target.value)} placeholder="e.g. 5–8 cm" />
+                                                </div>
                                             </div>
-                                            <div className="admin-field">
-                                                <label>English <span className="admin-field-lang">EN</span></label>
-                                                <textarea
-                                                    rows={5}
-                                                    value={productForm.desc_en || ''}
-                                                    onChange={e => setProductForm(p => ({ ...p, desc_en: e.target.value }))}
-                                                    placeholder="Product description in English"
-                                                />
+                                            <div className="admin-fields-row">
+                                                <div className="admin-field">
+                                                    <label>Diameter grade</label>
+                                                    <input value={productForm.specs?.diameter_grade || ''} onChange={e => handleSpecChange('diameter_grade', e.target.value)} placeholder="e.g. A / B / C" />
+                                                </div>
+                                                <div className="admin-field">
+                                                    <label>Processing</label>
+                                                    <input value={productForm.specs?.processing || ''} onChange={e => handleSpecChange('processing', e.target.value)} placeholder="Standard or Peeled" />
+                                                </div>
+                                            </div>
+                                            <div className="admin-fields-row">
+                                                <div className="admin-field">
+                                                    <label>Packaging</label>
+                                                    <input value={productForm.specs?.packaging || ''} onChange={e => handleSpecChange('packaging', e.target.value)} placeholder="PP bags 25 kg" />
+                                                </div>
+                                                <div className="admin-field">
+                                                    <label>MOQ</label>
+                                                    <input value={productForm.specs?.moq || ''} onChange={e => handleSpecChange('moq', e.target.value)} placeholder="e.g. 1 MT" />
+                                                </div>
+                                            </div>
+
+                                            <p className="admin-form-section-sublabel">Quality</p>
+                                            <div className="admin-fields-row">
+                                                <div className="admin-field">
+                                                    <label>Moisture</label>
+                                                    <input value={productForm.specs?.moisture || ''} onChange={e => handleSpecChange('moisture', e.target.value)} placeholder="≤ 8%" />
+                                                </div>
+                                                <div className="admin-field">
+                                                    <label>Ash</label>
+                                                    <input value={productForm.specs?.ash || ''} onChange={e => handleSpecChange('ash', e.target.value)} placeholder="≤ 9%" />
+                                                </div>
+                                            </div>
+                                            <div className="admin-fields-row">
+                                                <div className="admin-field">
+                                                    <label>Glycyrrhizin</label>
+                                                    <input value={productForm.specs?.glycyrrhizin || ''} onChange={e => handleSpecChange('glycyrrhizin', e.target.value)} placeholder="≥ 4% (root) / 8–12% (extract)" />
+                                                </div>
+                                                <div className="admin-field">
+                                                    <label>Foreign matter</label>
+                                                    <input value={productForm.specs?.foreign_matter || ''} onChange={e => handleSpecChange('foreign_matter', e.target.value)} placeholder="≤ 1%" />
+                                                </div>
+                                            </div>
+                                            <div className="admin-fields-row">
+                                                <div className="admin-field">
+                                                    <label>Heavy metals</label>
+                                                    <input value={productForm.specs?.heavy_metals || ''} onChange={e => handleSpecChange('heavy_metals', e.target.value)} placeholder="Within WHO/EU limits" />
+                                                </div>
+                                                <div className="admin-field">
+                                                    <label>Pesticide residues</label>
+                                                    <input value={productForm.specs?.pesticide_residues || ''} onChange={e => handleSpecChange('pesticide_residues', e.target.value)} placeholder="Within WHO/EU limits" />
+                                                </div>
+                                            </div>
+
+                                            <p className="admin-form-section-sublabel">Microbiology</p>
+                                            <div className="admin-fields-row">
+                                                <div className="admin-field">
+                                                    <label>TPC</label>
+                                                    <input value={productForm.specs?.tpc || ''} onChange={e => handleSpecChange('tpc', e.target.value)} placeholder="≤ 100,000 CFU/g" />
+                                                </div>
+                                                <div className="admin-field">
+                                                    <label>Yeast & Mould</label>
+                                                    <input value={productForm.specs?.yeast_mould || ''} onChange={e => handleSpecChange('yeast_mould', e.target.value)} placeholder="≤ 1,000 CFU/g" />
+                                                </div>
+                                            </div>
+                                            <div className="admin-fields-row">
+                                                <div className="admin-field">
+                                                    <label>E. coli</label>
+                                                    <input value={productForm.specs?.e_coli || ''} onChange={e => handleSpecChange('e_coli', e.target.value)} placeholder="Absent" />
+                                                </div>
+                                                <div className="admin-field">
+                                                    <label>Salmonella</label>
+                                                    <input value={productForm.specs?.salmonella || ''} onChange={e => handleSpecChange('salmonella', e.target.value)} placeholder="Absent" />
+                                                </div>
+                                            </div>
+
+                                            <p className="admin-form-section-sublabel">Storage & Shelf Life</p>
+                                            <div className="admin-fields-row">
+                                                <div className="admin-field">
+                                                    <label>Shelf life</label>
+                                                    <input value={productForm.specs?.shelf_life || ''} onChange={e => handleSpecChange('shelf_life', e.target.value)} placeholder="24 months" />
+                                                </div>
+                                                <div className="admin-field">
+                                                    <label>Storage conditions</label>
+                                                    <input value={productForm.specs?.storage || ''} onChange={e => handleSpecChange('storage', e.target.value)} placeholder="≤ 25°C, cool dry, no sunlight" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1286,7 +1861,19 @@ const AdminDashboard = () => {
                                                             </button>
                                                         </div>
                                                     )}
-                                                    <span className="admin-product-order" title="Display order">{product.order ?? '—'}</span>
+                                                    <div className="admin-product-order-wrap">
+                                                        <span className="admin-product-order" title="Display order">{product.order ?? '—'}</span>
+                                                        <button
+                                                            className={`admin-star-toggle-sm ${product.featured ? 'active' : ''}`}
+                                                            onClick={() => toggleFeatured(product)}
+                                                            title={product.featured ? 'Featured on Home — click to remove' : 'Click to feature on Home'}
+                                                            aria-pressed={!!product.featured}
+                                                        >
+                                                            <svg viewBox="0 0 24 24" width="14" height="14" fill={product.featured ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
                                                     <img src={product.image} alt={product.title_en} />
                                                     <div className="admin-product-row-info">
                                                         <div className="admin-product-row-main">
@@ -1296,17 +1883,6 @@ const AdminDashboard = () => {
                                                         <span className="admin-product-ru">{product.title_ru}</span>
                                                     </div>
                                                     <div className="admin-product-row-actions">
-                                                        <button
-                                                            className={`admin-star-toggle ${product.featured ? 'active' : ''}`}
-                                                            onClick={() => toggleFeatured(product)}
-                                                            title={product.featured ? 'Featured on Home — click to remove' : 'Click to feature on Home'}
-                                                            aria-pressed={!!product.featured}
-                                                        >
-                                                            <svg viewBox="0 0 24 24" width="18" height="18" fill={product.featured ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                                            </svg>
-                                                            <span>Featured</span>
-                                                        </button>
                                                         <button
                                                             className="admin-btn-secondary admin-btn-sm"
                                                             onClick={() => startEdit(product)}
@@ -1908,14 +2484,12 @@ const AdminDashboard = () => {
                                     </div>
                                 </div>
                                 <div className="admin-fields-row">
-                                    <div className="admin-field">
-                                        <label>Address <span className="admin-field-lang">RU</span></label>
-                                        <textarea rows={2} value={settings.address_ru || ''} onChange={e => handleSettingsChange('address_ru', e.target.value)} placeholder="Адрес на русском" />
-                                    </div>
-                                    <div className="admin-field">
-                                        <label>Address <span className="admin-field-lang">EN</span></label>
-                                        <textarea rows={2} value={settings.address_en || ''} onChange={e => handleSettingsChange('address_en', e.target.value)} placeholder="Address in English" />
-                                    </div>
+                                    {(adminTranslations.languages || [{ code: 'ru', label: 'RU', name: 'Russian' }, { code: 'en', label: 'EN', name: 'English' }]).map(lang => (
+                                        <div key={lang.code} className="admin-field">
+                                            <label>Address <span className="admin-field-lang">{lang.label}</span></label>
+                                            <textarea rows={2} value={settings[`address_${lang.code}`] || ''} onChange={e => handleSettingsChange(`address_${lang.code}`, e.target.value)} placeholder={`Address in ${lang.name}`} />
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
 
@@ -1959,6 +2533,137 @@ const AdminDashboard = () => {
                                     </button>
                                 </div>
                                 {seedMsg && <p className="admin-seed-msg">{seedMsg}</p>}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ── Languages tab ─────────────────────────────────────────── */}
+                    {!dataLoading && tab === 'languages' && (
+                        <div className="admin-section">
+                            <div className="admin-section-header">
+                                <div>
+                                    <h2>Languages & Translations</h2>
+                                    <p className="admin-section-sublabel">
+                                        Edit interface text below, then save to publish changes to the live site.
+                                    </p>
+                                </div>
+                                <div className="admin-save-group">
+                                    {translationsDirty && (
+                                        <span className="admin-unsaved-pill">● Unsaved changes</span>
+                                    )}
+                                    <button
+                                        className="admin-btn-primary"
+                                        onClick={saveTranslationsData}
+                                        disabled={translationsSaving || !translationsDirty}
+                                    >
+                                        {translationsSaving
+                                            ? 'Saving…'
+                                            : translationsDirty
+                                                ? 'Save changes'
+                                                : 'Saved'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* ── Language management ── */}
+                            <div className="admin-settings-card">
+                                <div className="admin-settings-card-head">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                    <h3>Active Languages</h3>
+                                </div>
+                                <div className="admin-lang-list">
+                                    {(adminTranslations.languages || []).map(lang => (
+                                        <div key={lang.code} className="admin-lang-row">
+                                            <span className="admin-lang-badge">{lang.label}</span>
+                                            <span className="admin-lang-name">{lang.name}</span>
+                                            <span className="admin-lang-code">{lang.code}</span>
+                                            <button
+                                                className="admin-btn-danger admin-btn-sm"
+                                                onClick={() => removeLanguage(lang.code)}
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div style={{ marginTop: 16 }}>
+                                    <button className="admin-btn-secondary" onClick={() => { setNewLangForm({ code: '', label: '', name: '' }); setShowAddLangModal(true); }}>
+                                        + Add Language
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* ── Translation editor ── */}
+                            <div className="admin-settings-card">
+                                <div className="admin-settings-card-head">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                    <h3>Edit Translations</h3>
+                                </div>
+
+                                {/* Language picker — dropdown scales cleanly with many languages */}
+                                <div className="admin-field admin-prod-lang-select">
+                                    <label>Editing language</label>
+                                    <select
+                                        value={transLangTab}
+                                        onChange={e => setTransLangTab(e.target.value)}
+                                    >
+                                        {(adminTranslations.languages || []).map(lang => (
+                                            <option key={lang.code} value={lang.code}>
+                                                {lang.name} ({lang.label})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* Translation groups */}
+                                {transLangTab && (
+                                    <div className="admin-trans-editor">
+                                        {TRANSLATION_GROUPS.map(group => (
+                                            <div key={group.id} className="admin-trans-group">
+                                                <button
+                                                    className="admin-trans-group-header"
+                                                    onClick={() => toggleGroup(group.id)}
+                                                >
+                                                    <span>{group.label}</span>
+                                                    <span className="admin-trans-group-count">{group.keys.length} strings</span>
+                                                    <svg
+                                                        width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" strokeWidth="2.5"
+                                                        style={{ transform: openGroups[group.id] ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
+                                                    >
+                                                        <polyline points="6 9 12 15 18 9"/>
+                                                    </svg>
+                                                </button>
+                                                {openGroups[group.id] && (
+                                                    <div className="admin-trans-fields">
+                                                        {group.keys.map(({ key, label, multiline }) => (
+                                                            <div key={key} className="admin-trans-field">
+                                                                <label className="admin-trans-field-label">
+                                                                    {label}
+                                                                    <span className="admin-trans-field-key">{key}</span>
+                                                                </label>
+                                                                {multiline ? (
+                                                                    <textarea
+                                                                        rows={3}
+                                                                        value={adminTranslations[transLangTab]?.[key] ?? ''}
+                                                                        onChange={e => handleTranslationChange(transLangTab, key, e.target.value)}
+                                                                    />
+                                                                ) : (
+                                                                    <input
+                                                                        type="text"
+                                                                        value={adminTranslations[transLangTab]?.[key] ?? ''}
+                                                                        onChange={e => handleTranslationChange(transLangTab, key, e.target.value)}
+                                                                    />
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}

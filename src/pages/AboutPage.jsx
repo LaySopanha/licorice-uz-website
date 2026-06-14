@@ -27,11 +27,11 @@ const AboutPage = () => {
                             <div className="about-extra-stats">
                                 <div className="extra-stat-card">
                                     <h3>1500+</h3>
-                                    <p>{language === 'ru' ? 'Тонн продукции в год' : 'Tons of products annually'}</p>
+                                    <p>{t('about_extra_stat_tons')}</p>
                                 </div>
                                 <div className="extra-stat-card">
                                     <h3>20+</h3>
-                                    <p>{language === 'ru' ? 'Квалифицированных сотрудников' : 'Qualified employees'}</p>
+                                    <p>{t('about_extra_stat_staff')}</p>
                                 </div>
                             </div>
                         </div>

@@ -28,6 +28,21 @@
     --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+html {
+    font-size: 90%;
+    overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 81%;
+    }
+}
+
+body {
+    overflow-x: hidden;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -65,9 +80,46 @@ body {
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-family-heading);
     font-weight: 700;
+    letter-spacing: -0.01em;
 }
 
+/* ── Unified Section Headers ────────────────────────────────────────────── */
+.section-header {
+    text-align: center;
+    margin-bottom: 64px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
+.section-label {
+    display: inline-block;
+    color: var(--color-primary);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+    padding: 6px 16px;
+    background: rgba(81, 94, 59, 0.06);
+    border-radius: 4px;
+}
+
+.section-title {
+    font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+    font-weight: 800;
+    color: var(--color-text-dark);
+    line-height: 1.15;
+    margin-bottom: 20px;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}
 
 img {
     max-width: 100%;
@@ -113,11 +165,19 @@ button:active,
 
 /* Professional Reveal Animations */
 .reveal {
-    opacity: 0;
-    transform: translateY(30px);
+    opacity: 1;
+    transform: none;
     transition: opacity 1s cubic-bezier(0.2, 1, 0.3, 1),
                 transform 1.2s cubic-bezier(0.2, 1, 0.3, 1);
     will-change: opacity, transform;
+}
+
+@media (max-width: 640px) {
+    .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
 }
 
 .reveal.active {

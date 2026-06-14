@@ -1,6 +1,7 @@
 .process-section {
-    padding: 100px 5%;
-    background-color: var(--color-secondary);
+    padding: 80px 7% 56px;
+    background-color: var(--color-bg-warm, #FAF9F6);
+    overflow: hidden;
 }
 
 .process-container {
@@ -10,142 +11,171 @@
 
 .process-header {
     text-align: center;
-    margin-bottom: 70px;
-}
-
-.process-header h2 {
-    font-family: var(--font-family-heading);
-    font-size: clamp(2.2rem, 4vw, 3.2rem);
-    font-weight: 700;
-    color: var(--color-text-dark);
-    margin-bottom: 15px;
-}
-
-.process-header p {
-    font-family: var(--font-family-body);
-    font-size: 1.15rem;
-    color: var(--color-text-muted);
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.process-steps {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 40px;
-}
-
-.process-step {
-    text-align: center;
+    margin-bottom: 100px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.step-icon-wrap {
-    width: 100%;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
+.process-header h2 {
+    font-family: var(--font-family-heading);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    color: var(--color-text-dark);
+    margin-bottom: 20px;
+    line-height: 1.1;
 }
 
-.step-icon {
-    width: 80px;
-    height: 80px;
-    background: white;
-    color: var(--color-primary);
-    border: 2px solid var(--color-primary-light);
+.process-intro {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    max-width: 650px;
+    line-height: 1.6;
+}
+
+/* ── Timeline ── */
+.process-timeline {
+    position: relative;
+    padding-top: 40px;
+}
+
+.process-main-line {
+    position: absolute;
+    top: 85px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, 
+        rgba(81, 94, 59, 0) 0%, 
+        rgba(81, 94, 59, 0.3) 10%, 
+        rgba(81, 94, 59, 0.3) 90%, 
+        rgba(81, 94, 59, 0) 100%
+    );
+}
+
+.process-items {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.process-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+.process-point {
+    margin-bottom: 40px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.process-icon-box {
+    width: 90px;
+    height: 90px;
+    background: #fff;
+    border: 1px solid rgba(81, 94, 59, 0.15);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.6rem;
+    color: var(--color-primary);
+    z-index: 5;
+}
+
+/* ── Content ── */
+.process-step-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    opacity: 0.6;
+}
+
+.process-text h3 {
+    font-size: 1.35rem;
     font-weight: 700;
-    box-shadow: var(--shadow-sm);
-    position: relative;
-    z-index: 2;
+    color: var(--color-text-dark);
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
 }
 
-.step-line {
-    position: absolute;
-    top: 50%;
-    left: calc(50% + 40px);
-    width: calc(100% - 40px);
-    height: 3px;
-    background: linear-gradient(to right, var(--color-primary-light) 0%, transparent 100%);
-    opacity: 0.2;
-    z-index: 1;
-}
-
-.process-step h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1A1A1A;
-    margin-bottom: 15px;
-}
-
-.process-step p {
+.process-text p {
     font-size: 0.95rem;
-    color: #666;
-    line-height: 1.6;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    padding: 0 15px;
 }
 
+/* ── Responsive ── */
 @media (max-width: 1024px) {
-    .process-section {
-        padding: 72px 5%;
-    }
-
-    .process-steps {
+    .process-items {
         grid-template-columns: repeat(2, 1fr);
-        gap: 48px;
+        gap: 60px 30px;
     }
 
-    .step-line {
+    .process-main-line {
         display: none;
     }
 
-    .process-header {
-        margin-bottom: 48px;
+    .process-point {
+        margin-bottom: 24px;
+    }
+
+    .process-dot {
+        display: none;
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
     .process-section {
-        padding: 56px 4%;
+        padding: 80px 7%;
     }
 
     .process-header {
-        margin-bottom: 36px;
+        margin-bottom: 60px;
     }
 
-    .process-header p {
-        font-size: 1rem;
+    .process-items {
+        grid-template-columns: 1fr;
+        gap: 48px;
     }
 
-    /* 2×2 grid — all 4 steps visible at once */
-    .process-steps {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 28px 16px;
+    .process-item {
+        flex-direction: row;
+        text-align: left;
+        align-items: flex-start;
+        gap: 24px;
     }
 
-    .step-icon {
-        width: 56px;
-        height: 56px;
-        font-size: 1.2rem;
+    .process-point {
+        margin-bottom: 0;
     }
 
-    .step-icon-wrap {
-        margin-bottom: 14px;
+    .process-icon-box {
+        width: 64px;
+        height: 64px;
+        flex-shrink: 0;
     }
 
-    .process-step h3 {
-        font-size: 0.95rem;
-        margin-bottom: 8px;
+    .process-icon-box svg {
+        width: 28px;
+        height: 28px;
     }
 
-    .process-step p {
-        font-size: 0.8rem;
-        line-height: 1.5;
+    .process-text {
+        padding-top: 4px;
+    }
+
+    .process-text p {
+        padding: 0;
     }
 }

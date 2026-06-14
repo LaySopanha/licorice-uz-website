@@ -144,6 +144,104 @@
     font-weight: 500;
 }
 
+/* Technical Specifications */
+.pd-specs {
+    border-top: 1px solid #e5e2db;
+    padding-top: 60px;
+    margin-bottom: 64px;
+}
+
+.pd-specs h2 {
+    font-family: var(--font-family-heading);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin-bottom: 32px;
+}
+
+.pd-specs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.pd-spec-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+.pd-spec-card-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-primary);
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(81, 94, 59, 0.15);
+}
+
+.pd-spec-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 0;
+}
+
+.pd-spec-list dt {
+    font-size: 0.78rem;
+    color: #888;
+    font-weight: 500;
+    padding: 8px 8px 8px 0;
+    border-bottom: 1px solid #f0ede8;
+    line-height: 1.4;
+}
+
+.pd-spec-list dd {
+    font-size: 0.85rem;
+    color: var(--color-text-dark);
+    font-weight: 600;
+    padding: 8px 0 8px 8px;
+    border-bottom: 1px solid #f0ede8;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.pd-spec-list dt:last-of-type,
+.pd-spec-list dd:last-of-type {
+    border-bottom: none;
+}
+
+.pd-spec-list em {
+    font-style: italic;
+    color: #555;
+    font-weight: 500;
+}
+
+@media (max-width: 1100px) {
+    .pd-specs-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .pd-specs {
+        padding-top: 40px;
+        margin-bottom: 48px;
+    }
+
+    .pd-specs h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .pd-specs-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Related products */
 .pd-related {
     border-top: 1px solid #e5e2db;
@@ -328,10 +426,24 @@
         flex-direction: column;
         align-items: stretch;
         text-align: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .pd-cta {
+        width: 100%;
+        padding: 14px 24px !important;
     }
 
     .pd-contact-link {
         text-align: center;
+        display: block;
+    }
+
+    .pd-quote {
+        max-width: none;
+        width: 100%;
+        margin-bottom: 28px;
     }
 
     .pd-badges {

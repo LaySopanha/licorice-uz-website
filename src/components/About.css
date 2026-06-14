@@ -234,11 +234,6 @@
     border-radius: 30px;
     text-align: center;
     border: 1px solid rgba(0,0,0,0.02);
-    transition: transform 0.3s ease;
-}
-
-.extra-stat-card:hover {
-    transform: translateY(-5px);
 }
 
 .extra-stat-card h3 {

@@ -30,8 +30,8 @@ export const ProductDetailSkeleton = () => (
                 <Skeleton type="text" />
                 <Skeleton type="text" style={{ width: '80%' }} />
                 <div className="pd-actions" style={{ marginTop: '2rem' }}>
-                    <Skeleton type="rect" style={{ width: '160px', height: '50px', borderRadius: '30px' }} />
-                    <Skeleton type="rect" style={{ width: '120px', height: '50px', borderRadius: '30px', marginLeft: '1rem' }} />
+                    <Skeleton type="rect" className="sk-pd-action" />
+                    <Skeleton type="rect" className="sk-pd-action sk-pd-action--secondary" />
                 </div>
             </div>
         </div>

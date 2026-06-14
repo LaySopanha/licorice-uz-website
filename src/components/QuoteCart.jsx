@@ -148,7 +148,7 @@ const QuoteCart = () => {
                             </div>
                             <div className="qc-field">
                                 <input name="email" type="email" value={form.email} onChange={handleChange}
-                                    placeholder="Email *" className={errors.email ? 'error' : ''} />
+                                    placeholder={`${t('form_email')} *`} className={errors.email ? 'error' : ''} />
                                 {errors.email && <span className="qc-error">{errors.email}</span>}
                             </div>
                             <div className="qc-field">

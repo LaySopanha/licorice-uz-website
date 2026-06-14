@@ -1,19 +1,38 @@
+/* ── Base ── */
 .skeleton {
+    position: relative;
+    overflow: hidden;
+    display: block;
     background-color: #e2e5e7;
-    background-image: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0),
-        rgba(255, 255, 255, 0.5),
-        rgba(255, 255, 255, 0)
-    );
-    background-size: 200px 100%;
-    background-repeat: no-repeat;
-    display: inline-block;
     line-height: 1;
     width: 100%;
-    animation: skeleton-shimmer 1.5s infinite;
 }
 
+.skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        transparent 100%
+    );
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+    to { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skeleton::after {
+        animation: none;
+    }
+}
+
+/* ── Types ── */
 .skeleton-text {
     height: 1rem;
     margin-bottom: 0.5rem;
@@ -39,16 +58,7 @@
     height: 50px;
 }
 
-@keyframes skeleton-shimmer {
-    0% {
-        background-position: -200px 0;
-    }
-    100% {
-        background-position: calc(200px + 100%) 0;
-    }
-}
-
-/* Custom skeletons for specific parts */
+/* ── ProductCard skeleton ── */
 .product-card-skeleton {
     background: #fff;
     border-radius: 20px;
@@ -59,33 +69,9 @@
 
 .product-card-skeleton .sk-image {
     aspect-ratio: 1;
+    height: auto;
     border-radius: 12px;
     margin-bottom: 16px;
-    background-color: #e2e5e7;
-    background-image: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0),
-        rgba(255, 255, 255, 0.5),
-        rgba(255, 255, 255, 0)
-    );
-    background-size: 200px 100%;
-    background-repeat: no-repeat;
-    animation: skeleton-shimmer 1.5s infinite;
-}
-
-.product-card-skeleton .sk-title,
-.product-card-skeleton .sk-text,
-.product-card-skeleton .sk-button {
-    background-color: #e2e5e7;
-    background-image: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0),
-        rgba(255, 255, 255, 0.5),
-        rgba(255, 255, 255, 0)
-    );
-    background-size: 200px 100%;
-    background-repeat: no-repeat;
-    animation: skeleton-shimmer 1.5s infinite;
 }
 
 .product-card-skeleton .sk-title {
@@ -97,7 +83,6 @@
 
 .product-card-skeleton .sk-text {
     height: 0.8rem;
-    width: 100%;
     margin-bottom: 4px;
     border-radius: 4px;
 }
@@ -107,4 +92,26 @@
     width: 120px;
     margin-top: 12px;
     border-radius: 30px;
+}
+
+/* ── ProductDetail action skeletons ── */
+.sk-pd-action {
+    height: 50px;
+    border-radius: 30px;
+    margin-bottom: 0;
+    width: 160px;
+    flex-shrink: 0;
+}
+
+.sk-pd-action--secondary {
+    width: 120px;
+}
+
+@media (max-width: 600px) {
+    .sk-pd-action,
+    .sk-pd-action--secondary {
+        width: 100%;
+        height: 46px;
+        flex-shrink: 1;
+    }
 }
