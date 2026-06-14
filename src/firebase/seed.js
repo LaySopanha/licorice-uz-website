@@ -290,6 +290,7 @@ export const SEED_TRANSLATIONS = {
         spec_salmonella: 'Сальмонелла',
         spec_shelf_life: 'Срок годности',
         spec_storage: 'Условия хранения',
+        spec_accompanying_docs: 'Сопроводительные документы',
         // Modals
         modal_price_title: 'Запрос цены',
         modal_info_title: 'Запрос дополнительной информации',
@@ -457,6 +458,7 @@ export const SEED_TRANSLATIONS = {
         spec_salmonella: 'Salmonella',
         spec_shelf_life: 'Shelf life',
         spec_storage: 'Storage',
+        spec_accompanying_docs: 'Accompanying Documents',
         // Modals
         modal_price_title: 'Price Request',
         modal_info_title: 'Request Additional Info',

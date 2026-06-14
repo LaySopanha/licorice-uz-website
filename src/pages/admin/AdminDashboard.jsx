@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, useMemo, Fragment } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useLayoutEffect, useRef, useMemo, Fragment } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../../firebase/config';
 import { uploadProductImage, uploadGalleryImage } from '../../supabase/config';
@@ -234,9 +234,10 @@ const TRANSLATION_GROUPS = [
 const AdminDashboard = () => {
     const navigate = useNavigate();
     const { refreshTranslations } = useLanguage();
+    const { tab: tabParam, productSlug } = useParams();
+    const tab = tabParam || (productSlug ? 'products' : 'dashboard');
     const [user, setUser] = useState(null);
     const [authChecked, setAuthChecked] = useState(false);
-    const [tab, setTab] = useState(() => sessionStorage.getItem('admin_tab') || 'dashboard');
     const [dataLoading, setDataLoading] = useState(true);
 
     // Products state
@@ -261,8 +262,11 @@ const AdminDashboard = () => {
     const [transLangTab, setTransLangTab] = useState('');
     const [prodLangTab, setProdLangTab] = useState('');
     const [openGroups, setOpenGroups] = useState({});
+    const [openSpecSections, setOpenSpecSections] = useState({ identity: true, physical: true, quality: false, microbiology: false, storage: false, documents: false });
+    const toggleSpecSection = id => setOpenSpecSections(p => ({ ...p, [id]: !p[id] }));
     const [newLangForm, setNewLangForm] = useState({ code: '', label: '', name: '' });
     const [showAddLangModal, setShowAddLangModal] = useState(false);
+    const [newDocInput, setNewDocInput] = useState('');
 
     // Inquiries state
     const [inquiries, setInquiries] = useState([]);
@@ -353,14 +357,51 @@ const AdminDashboard = () => {
     useEffect(() => { setProductsPage(0); }, [searchTerm, filterFeatured]);
     useEffect(() => { setInqPage(0); }, [inqFilter, inqSearch]);
 
+    useEffect(() => {
+        if (!productSlug) {
+            setEditingProduct(null);
+            setIsAdding(false);
+            setProductForm({});
+            return;
+        }
+        if (productSlug === 'new') {
+            if (!isAdding) {
+                setIsAdding(true);
+                setEditingProduct(null);
+                setProdLangTab(firstLangCode());
+                setNewDocInput('');
+                const langs = adminTranslations.languages || [{ code: 'ru' }, { code: 'en' }];
+                const defaults = { botanical_name: 'Glycyrrhiza glabra', origin: 'Uzbekistan', part_used: 'Root', cultivation: 'Wild + artificial', form_cut_type: '', cut_size: '', diameter_grade: '', processing: '', packaging: 'PP bags 25 kg', moq: '', moisture: '≤ 8%', ash: '≤ 9%', glycyrrhizin: '', foreign_matter: '≤ 1%', heavy_metals: 'Within WHO/EU limits', pesticide_residues: 'Within WHO/EU limits', tpc: '≤ 100,000 CFU/g', yeast_mould: '≤ 1,000 CFU/g', e_coli: 'Absent', salmonella: 'Absent', shelf_life: '24 months', storage: '≤ 25°C, cool dry, no sunlight', documents: [] };
+                const s = {}; langs.forEach(l => { s[l.code] = { ...defaults }; });
+                const langFields = {}; langs.forEach(l => { langFields[`title_${l.code}`] = ''; langFields[`desc_${l.code}`] = ''; });
+                setProductForm({ slug: '', ...langFields, featured: false, order: products.length > 0 ? Math.max(...products.map(p => p.order || 0)) + 1 : 1, image: '', specs: s });
+                setImageFile(null); setImagePreview('');
+            }
+            return;
+        }
+        if (editingProduct !== productSlug && products.length > 0) {
+            const product = products.find(p => p.slug === productSlug);
+            if (product) {
+                const langs = adminTranslations.languages || [{ code: 'ru' }, { code: 'en' }];
+                let specs = product.specs || {};
+                const isFlat = !langs.some(l => specs[l.code] && typeof specs[l.code] === 'object');
+                if (isFlat) { const { documents, ...flat } = specs; const n = {}; langs.forEach(l => { n[l.code] = { ...flat, documents: documents || [] }; }); specs = n; }
+                setEditingProduct(product.slug);
+                setIsAdding(false);
+                setProductForm({ ...product, specs });
+                setProdLangTab(firstLangCode());
+                setNewDocInput('');
+                setImageFile(null);
+                setImagePreview(product.image);
+            }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [productSlug, products]);
+
     const setTabPersist = (t) => {
-        sessionStorage.setItem('admin_tab', t);
-        // Reset any open edit/add form in Products when leaving the tab
-        cancelEdit();
-        // Reset any open inquiry detail view when leaving the tab
         setSelectedInquiry(null);
         setExpandedInquiry(null);
-        setTab(t);
+        navigate('/admin/' + t);
     };
 
     const loadData = async () => {
@@ -400,18 +441,32 @@ const AdminDashboard = () => {
     const firstLangCode = () => adminTranslations.languages?.[0]?.code || 'ru';
 
     const startEdit = (product) => {
+        savedScrollY.current = window.scrollY;
+        navigate('/admin/products/' + product.slug);
+        const langs = adminTranslations.languages || [{ code: 'ru' }, { code: 'en' }];
+        let specs = product.specs || {};
+        const isFlat = !langs.some(l => specs[l.code] && typeof specs[l.code] === 'object');
+        if (isFlat) {
+            const { documents, ...flatFields } = specs;
+            const nested = {};
+            langs.forEach(l => { nested[l.code] = { ...flatFields, documents: documents || [] }; });
+            specs = nested;
+        }
         setEditingProduct(product.slug);
         setIsAdding(false);
-        setProductForm({ ...product });
+        setProductForm({ ...product, specs });
         setProdLangTab(firstLangCode());
+        setNewDocInput('');
         setImageFile(null);
         setImagePreview(product.image);
     };
 
     const startAdd = () => {
+        navigate('/admin/products/new');
         setIsAdding(true);
         setEditingProduct(null);
         setProdLangTab(firstLangCode());
+        setNewDocInput('');
         const langs = adminTranslations.languages || [{ code: 'ru' }, { code: 'en' }];
         const langFields = {};
         langs.forEach(lang => {
@@ -424,46 +479,71 @@ const AdminDashboard = () => {
             featured: false,
             order: products.length > 0 ? Math.max(...products.map(p => p.order || 0)) + 1 : 1,
             image: '',
-            specs: {
-                botanical_name: 'Glycyrrhiza glabra',
-                origin: 'Uzbekistan',
-                part_used: 'Root',
-                cultivation: 'Wild + artificial',
-                form_cut_type: '',
-                cut_size: '',
-                diameter_grade: '',
-                processing: '',
-                packaging: 'PP bags 25 kg',
-                moq: '',
-                moisture: '≤ 8%',
-                ash: '≤ 9%',
-                glycyrrhizin: '',
-                foreign_matter: '≤ 1%',
-                heavy_metals: 'Within WHO/EU limits',
-                pesticide_residues: 'Within WHO/EU limits',
-                tpc: '≤ 100,000 CFU/g',
-                yeast_mould: '≤ 1,000 CFU/g',
-                e_coli: 'Absent',
-                salmonella: 'Absent',
-                shelf_life: '24 months',
-                storage: '≤ 25°C, cool dry, no sunlight',
-            }
+            specs: (() => {
+                const defaults = {
+                    botanical_name: 'Glycyrrhiza glabra',
+                    origin: 'Uzbekistan',
+                    part_used: 'Root',
+                    cultivation: 'Wild + artificial',
+                    form_cut_type: '',
+                    cut_size: '',
+                    diameter_grade: '',
+                    processing: '',
+                    packaging: 'PP bags 25 kg',
+                    moq: '',
+                    moisture: '≤ 8%',
+                    ash: '≤ 9%',
+                    glycyrrhizin: '',
+                    foreign_matter: '≤ 1%',
+                    heavy_metals: 'Within WHO/EU limits',
+                    pesticide_residues: 'Within WHO/EU limits',
+                    tpc: '≤ 100,000 CFU/g',
+                    yeast_mould: '≤ 1,000 CFU/g',
+                    e_coli: 'Absent',
+                    salmonella: 'Absent',
+                    shelf_life: '24 months',
+                    storage: '≤ 25°C, cool dry, no sunlight',
+                    documents: [],
+                };
+                const s = {};
+                langs.forEach(l => { s[l.code] = { ...defaults }; });
+                return s;
+            })(),
         });
         setImageFile(null);
         setImagePreview('');
     };
 
-    const cancelEdit = () => {
+    const savedScrollY = useRef(0);
+    const pendingScrollY = useRef(null);
+
+    useLayoutEffect(() => {
+        if (pendingScrollY.current !== null) {
+            window.scrollTo({ top: pendingScrollY.current, behavior: 'instant' });
+            pendingScrollY.current = null;
+        }
+    }, [editingProduct]);
+
+    const cancelEdit = (restoreScroll = false) => {
+        if (restoreScroll) pendingScrollY.current = savedScrollY.current;
         setEditingProduct(null);
         setIsAdding(false);
         setProductForm({});
         setImageFile(null);
         setImagePreview('');
+        if (restoreScroll) navigate('/admin/products');
     };
 
     const handleSpecChange = (key, value) => {
-        setProductForm(p => ({ ...p, specs: { ...p.specs, [key]: value } }));
+        setProductForm(p => ({
+            ...p,
+            specs: {
+                ...p.specs,
+                [prodLangTab]: { ...(p.specs?.[prodLangTab] || {}), [key]: value },
+            },
+        }));
     };
+
 
     // ── Translations ──────────────────────────────────────────────────────────
 
@@ -567,7 +647,7 @@ const AdminDashboard = () => {
                 setProducts(prev => prev.map(p => p.slug === updated.slug ? updated : p));
             }
 
-            cancelEdit();
+            cancelEdit(!isAdding);
             showToast(isAdding ? 'Product added.' : 'Product saved.');
         } catch (err) {
             console.error(err);
@@ -852,11 +932,24 @@ const AdminDashboard = () => {
         return isNaN(d) ? null : d;
     };
 
-    const last14Days = useMemo(() => {
-        const days = [];
+    const last30Days = useMemo(() => {
         const now = new Date();
         const locale = navigator.language || 'ru-RU';
-        for (let i = 13; i >= 0; i--) {
+
+        // Find earliest inquiry date to avoid showing empty leading days
+        let earliest = null;
+        inquiries.forEach(inq => {
+            const ts = inqDate(inq);
+            if (ts && (!earliest || ts < earliest)) earliest = ts;
+        });
+
+        // Start 2 days before first inquiry, minimum 7-day window
+        const startOffset = earliest
+            ? Math.min(29, Math.max(6, Math.ceil((now - earliest) / 86400000) + 2))
+            : 13;
+
+        const days = [];
+        for (let i = startOffset; i >= 0; i--) {
             const d = new Date(now);
             d.setDate(now.getDate() - i);
             const key = d.toISOString().slice(0, 10);
@@ -931,7 +1024,7 @@ const AdminDashboard = () => {
         return sum || stats.total || 0;
     }, [stats]);
 
-    const maxDay = Math.max(1, ...last14Days.map(d => d.count));
+    const maxDay = Math.max(1, ...last30Days.map(d => d.count));
     const inqTotal = typeBreakdown.contact + typeBreakdown.price + typeBreakdown.quote;
     const pct = (n) => (inqTotal ? Math.round((n / inqTotal) * 100) : 0);
     const donutStyle = inqTotal === 0
@@ -1038,7 +1131,7 @@ const AdminDashboard = () => {
             {/* Header */}
             <header className="admin-header">
                 <div className="admin-header-left">
-                    <img src="/images/B5-logo.png" alt="Bogot Master" className="admin-logo-sm" />
+                    <img src="/Logo/new-logo.png" alt="Bogot Master" className="admin-logo-sm" />
                     <span>Admin Panel</span>
                 </div>
                 <button
@@ -1208,12 +1301,18 @@ const AdminDashboard = () => {
                                 ) : (
                                     /* List skeleton */
                                     <>
-                                        <div className="admin-list-controls" style={{ pointerEvents: 'none', opacity: 0.6 }}>
-                                            <div className="admin-skel" style={{ height: 40, width: '100%', maxWidth: 300, borderRadius: 8 }} />
-                                            <div className="admin-filter-chips">
-                                                <div className="admin-skel" style={{ height: 32, width: 60, borderRadius: 16 }} />
-                                                <div className="admin-skel" style={{ height: 32, width: 80, borderRadius: 16 }} />
-                                                <div className="admin-skel" style={{ height: 32, width: 70, borderRadius: 16 }} />
+                                        <div className="admin-section-header" style={{ pointerEvents: 'none' }}>
+                                            <div className="admin-skel" style={{ height: 22, width: 200, borderRadius: 6 }} />
+                                            <div style={{ display: 'flex', gap: 8 }}>
+                                                <div className="admin-skel" style={{ height: 34, width: 80, borderRadius: 8 }} />
+                                            </div>
+                                        </div>
+                                        <div className="admin-list-controls" style={{ pointerEvents: 'none' }}>
+                                            <div className="admin-skel" style={{ height: 40, width: '100%', borderRadius: 8 }} />
+                                            <div className="admin-filter-chips" style={{ background: '#f0ede8' }}>
+                                                {[52, 76, 74, 60, 62].map((w, i) => (
+                                                    <div key={i} className="admin-skel" style={{ height: 30, width: w, borderRadius: 6, flexShrink: 0 }} />
+                                                ))}
                                             </div>
                                         </div>
                                         <div className="admin-table-wrap">
@@ -1224,14 +1323,14 @@ const AdminDashboard = () => {
                                                     <th style={{width:'130px'}}>Date</th><th style={{width:'90px'}}></th>
                                                 </tr></thead>
                                                 <tbody>
-                                                    {[...Array(5)].map((_, i) => (
+                                                    {[...Array(6)].map((_, i) => (
                                                         <tr key={i}>
                                                             <td><div className="admin-skel" style={{height:22,width:56,borderRadius:4}}/></td>
-                                                            <td><div className="admin-skel" style={{height:14,width:100,borderRadius:4}}/></td>
-                                                            <td><div className="admin-skel" style={{height:14,width:140,borderRadius:4}}/></td>
-                                                            <td><div className="admin-skel" style={{height:14,width:80,borderRadius:4}}/></td>
-                                                            <td><div className="admin-skel" style={{height:14,width:80,borderRadius:4}}/></td>
-                                                            <td><div className="admin-skel" style={{height:28,width:50,borderRadius:4}}/></td>
+                                                            <td><div className="admin-skel" style={{height:13,width:'80%',borderRadius:4}}/></td>
+                                                            <td><div className="admin-skel" style={{height:13,width:'85%',borderRadius:4}}/></td>
+                                                            <td><div className="admin-skel" style={{height:13,width:'60%',borderRadius:4}}/></td>
+                                                            <td><div className="admin-skel" style={{height:13,width:72,borderRadius:4}}/></td>
+                                                            <td><div className="admin-skel" style={{height:28,width:50,borderRadius:6}}/></td>
                                                         </tr>
                                                     ))}
                                                 </tbody>
@@ -1339,22 +1438,22 @@ const AdminDashboard = () => {
                                 {/* Inquiries over 14 days — line chart */}
                                 <div className="admin-card admin-card-wide">
                                     <div className="admin-card-head">
-                                        <h3>Inquiries — last 14 days</h3>
-                                        <span className="admin-card-meta">{last14Days.reduce((s, d) => s + d.count, 0)} total</span>
+                                        <h3>Inquiries — last {last30Days.length} days</h3>
+                                        <span className="admin-card-meta">{last30Days.reduce((s, d) => s + d.count, 0)} total</span>
                                     </div>
                                     {(() => {
                                         const W = 700, H = 200;
                                         const padT = 40, padB = 40, padL = 30, padR = 30;
                                         const cW = W - padL - padR;
                                         const cH = H - padT - padB;
-                                        const n = last14Days.length;
-                                        const maxDay = Math.max(...last14Days.map(d => d.count));
+                                        const n = last30Days.length;
+                                        const maxDay = Math.max(...last30Days.map(d => d.count));
                                         const max = Math.max(maxDay, 1);
                                         const px = i => padL + (n < 2 ? cW / 2 : (i / (n - 1)) * cW);
                                         const py = v => padT + (1 - v / max) * cH;
 
                                         // Straight lines for data precision
-                                        const points = last14Days.map((d, i) => ({ x: px(i), y: py(d.count) }));
+                                        const points = last30Days.map((d, i) => ({ x: px(i), y: py(d.count) }));
                                         const pts = points.map(p => `${p.x},${p.y}`).join(' ');
                                         const areaPath = `M ${px(0)} ${py(0)} L ${pts} L ${px(n - 1)} ${py(0)} Z`;
 
@@ -1368,7 +1467,7 @@ const AdminDashboard = () => {
                                             }
                                         };
 
-                                        const hoverData = chartHoverIndex !== null ? last14Days[chartHoverIndex] : null;
+                                        const hoverData = chartHoverIndex !== null ? last30Days[chartHoverIndex] : null;
 
                                         return (
                                             <div style={{ position: 'relative' }}>
@@ -1416,8 +1515,8 @@ const AdminDashboard = () => {
                                                     )}
 
                                                     {/* X-Axis labels */}
-                                                    {last14Days.map((d, i) => (i % 2 === 0 || i === n - 1) && (
-                                                        <text key={d.key} x={px(i)} y={H - 12} textAnchor="middle" fontSize="10" fill="#999" fontWeight="500">
+                                                    {last30Days.map((d, i) => (i % Math.max(1, Math.floor(n / 6)) === 0 || i === n - 1) && (
+                                                        <text key={d.key} x={px(i)} y={H - 12} textAnchor="middle" fill="#999" fontWeight="500">
                                                             {d.label}
                                                         </text>
                                                     ))}
@@ -1505,7 +1604,7 @@ const AdminDashboard = () => {
                                 </div>
 
                                 {/* Recent inquiries */}
-                                <div className="admin-card admin-card-wide">
+                                <div className="admin-card">
                                     <div className="admin-card-head">
                                         <h3>Recent Inquiries</h3>
                                         <button className="admin-card-link" onClick={() => setTabPersist('inquiries')}>View all</button>
@@ -1547,11 +1646,11 @@ const AdminDashboard = () => {
                             {(editingProduct || isAdding) ? (
                                 <div className="admin-edit-form">
                                     <div className="admin-form-header">
-                                        <div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                             <h3>{isAdding ? 'New Product' : 'Edit Product'}</h3>
                                             {!isAdding && <span className="admin-form-slug-badge">{productForm.slug}</span>}
                                         </div>
-                                        <button className="admin-btn-close" onClick={cancelEdit}>&times;</button>
+                                        <button className="admin-btn-close" onClick={() => cancelEdit(true)}>&times;</button>
                                     </div>
 
                                     <div className="admin-form-body">
@@ -1668,127 +1767,174 @@ const AdminDashboard = () => {
                                                 );
                                             })()}
 
-                                            <p className="admin-form-section-label">Specifications</p>
+                                            <p className="admin-form-section-label">
+                                                Specifications
+                                                <span className="admin-field-lang" style={{ marginLeft: 8, fontWeight: 400 }}>
+                                                    {(adminTranslations.languages || []).find(l => l.code === prodLangTab)?.name || prodLangTab}
+                                                </span>
+                                            </p>
 
-                                            <p className="admin-form-section-sublabel">Identity</p>
-                                            <div className="admin-fields-row">
-                                                <div className="admin-field">
-                                                    <label>Botanical name</label>
-                                                    <input value={productForm.specs?.botanical_name || ''} onChange={e => handleSpecChange('botanical_name', e.target.value)} placeholder="Glycyrrhiza glabra" />
+                                            {/* Identity */}
+                                            <button type="button" className="admin-spec-section-toggle" onClick={() => toggleSpecSection('identity')}>
+                                                <span>Identity</span>
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: openSpecSections.identity ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}><polyline points="6 9 12 15 18 9"/></svg>
+                                            </button>
+                                            {openSpecSections.identity && (<>
+                                                <div className="admin-fields-row">
+                                                    <div className="admin-field"><label>Botanical name</label><input value={productForm.specs?.[prodLangTab]?.botanical_name || ''} onChange={e => handleSpecChange('botanical_name', e.target.value)} placeholder="Glycyrrhiza glabra" /></div>
+                                                    <div className="admin-field"><label>Origin</label><input value={productForm.specs?.[prodLangTab]?.origin || ''} onChange={e => handleSpecChange('origin', e.target.value)} placeholder="Uzbekistan" /></div>
                                                 </div>
-                                                <div className="admin-field">
-                                                    <label>Origin</label>
-                                                    <input value={productForm.specs?.origin || ''} onChange={e => handleSpecChange('origin', e.target.value)} placeholder="Uzbekistan" />
+                                                <div className="admin-fields-row">
+                                                    <div className="admin-field"><label>Part used</label><input value={productForm.specs?.[prodLangTab]?.part_used || ''} onChange={e => handleSpecChange('part_used', e.target.value)} placeholder="Root" /></div>
+                                                    <div className="admin-field"><label>Cultivation</label><input value={productForm.specs?.[prodLangTab]?.cultivation || ''} onChange={e => handleSpecChange('cultivation', e.target.value)} placeholder="Wild + artificial" /></div>
                                                 </div>
-                                            </div>
-                                            <div className="admin-fields-row">
-                                                <div className="admin-field">
-                                                    <label>Part used</label>
-                                                    <input value={productForm.specs?.part_used || ''} onChange={e => handleSpecChange('part_used', e.target.value)} placeholder="Root" />
-                                                </div>
-                                                <div className="admin-field">
-                                                    <label>Cultivation</label>
-                                                    <input value={productForm.specs?.cultivation || ''} onChange={e => handleSpecChange('cultivation', e.target.value)} placeholder="Wild + artificial" />
-                                                </div>
-                                            </div>
+                                            </>)}
 
-                                            <p className="admin-form-section-sublabel">Physical</p>
-                                            <div className="admin-fields-row">
-                                                <div className="admin-field">
-                                                    <label>Form / cut type</label>
-                                                    <input value={productForm.specs?.form_cut_type || ''} onChange={e => handleSpecChange('form_cut_type', e.target.value)} placeholder="e.g. Fingers, Sticks, Powder" />
+                                            {/* Physical */}
+                                            <button type="button" className="admin-spec-section-toggle" onClick={() => toggleSpecSection('physical')}>
+                                                <span>Physical</span>
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: openSpecSections.physical ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}><polyline points="6 9 12 15 18 9"/></svg>
+                                            </button>
+                                            {openSpecSections.physical && (<>
+                                                <div className="admin-fields-row">
+                                                    <div className="admin-field"><label>Form / cut type</label><input value={productForm.specs?.[prodLangTab]?.form_cut_type || ''} onChange={e => handleSpecChange('form_cut_type', e.target.value)} placeholder="e.g. Fingers, Sticks, Powder" /></div>
+                                                    <div className="admin-field"><label>Cut size / length</label><input value={productForm.specs?.[prodLangTab]?.cut_size || ''} onChange={e => handleSpecChange('cut_size', e.target.value)} placeholder="e.g. 5–8 cm" /></div>
                                                 </div>
-                                                <div className="admin-field">
-                                                    <label>Cut size / length</label>
-                                                    <input value={productForm.specs?.cut_size || ''} onChange={e => handleSpecChange('cut_size', e.target.value)} placeholder="e.g. 5–8 cm" />
+                                                <div className="admin-fields-row">
+                                                    <div className="admin-field"><label>Diameter grade</label><input value={productForm.specs?.[prodLangTab]?.diameter_grade || ''} onChange={e => handleSpecChange('diameter_grade', e.target.value)} placeholder="e.g. A / B / C" /></div>
+                                                    <div className="admin-field"><label>Processing</label><input value={productForm.specs?.[prodLangTab]?.processing || ''} onChange={e => handleSpecChange('processing', e.target.value)} placeholder="Standard or Peeled" /></div>
                                                 </div>
-                                            </div>
-                                            <div className="admin-fields-row">
-                                                <div className="admin-field">
-                                                    <label>Diameter grade</label>
-                                                    <input value={productForm.specs?.diameter_grade || ''} onChange={e => handleSpecChange('diameter_grade', e.target.value)} placeholder="e.g. A / B / C" />
+                                                <div className="admin-fields-row">
+                                                    <div className="admin-field"><label>Packaging</label><input value={productForm.specs?.[prodLangTab]?.packaging || ''} onChange={e => handleSpecChange('packaging', e.target.value)} placeholder="PP bags 25 kg" /></div>
+                                                    <div className="admin-field"><label>MOQ</label><input value={productForm.specs?.[prodLangTab]?.moq || ''} onChange={e => handleSpecChange('moq', e.target.value)} placeholder="e.g. 1 MT" /></div>
                                                 </div>
-                                                <div className="admin-field">
-                                                    <label>Processing</label>
-                                                    <input value={productForm.specs?.processing || ''} onChange={e => handleSpecChange('processing', e.target.value)} placeholder="Standard or Peeled" />
-                                                </div>
-                                            </div>
-                                            <div className="admin-fields-row">
-                                                <div className="admin-field">
-                                                    <label>Packaging</label>
-                                                    <input value={productForm.specs?.packaging || ''} onChange={e => handleSpecChange('packaging', e.target.value)} placeholder="PP bags 25 kg" />
-                                                </div>
-                                                <div className="admin-field">
-                                                    <label>MOQ</label>
-                                                    <input value={productForm.specs?.moq || ''} onChange={e => handleSpecChange('moq', e.target.value)} placeholder="e.g. 1 MT" />
-                                                </div>
-                                            </div>
+                                            </>)}
 
-                                            <p className="admin-form-section-sublabel">Quality</p>
-                                            <div className="admin-fields-row">
-                                                <div className="admin-field">
-                                                    <label>Moisture</label>
-                                                    <input value={productForm.specs?.moisture || ''} onChange={e => handleSpecChange('moisture', e.target.value)} placeholder="≤ 8%" />
+                                            {/* Quality */}
+                                            <button type="button" className="admin-spec-section-toggle" onClick={() => toggleSpecSection('quality')}>
+                                                <span>Quality</span>
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: openSpecSections.quality ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}><polyline points="6 9 12 15 18 9"/></svg>
+                                            </button>
+                                            {openSpecSections.quality && (<>
+                                                <div className="admin-fields-row">
+                                                    <div className="admin-field"><label>Moisture</label><input value={productForm.specs?.[prodLangTab]?.moisture || ''} onChange={e => handleSpecChange('moisture', e.target.value)} placeholder="≤ 8%" /></div>
+                                                    <div className="admin-field"><label>Ash</label><input value={productForm.specs?.[prodLangTab]?.ash || ''} onChange={e => handleSpecChange('ash', e.target.value)} placeholder="≤ 9%" /></div>
                                                 </div>
-                                                <div className="admin-field">
-                                                    <label>Ash</label>
-                                                    <input value={productForm.specs?.ash || ''} onChange={e => handleSpecChange('ash', e.target.value)} placeholder="≤ 9%" />
+                                                <div className="admin-fields-row">
+                                                    <div className="admin-field"><label>Glycyrrhizin</label><input value={productForm.specs?.[prodLangTab]?.glycyrrhizin || ''} onChange={e => handleSpecChange('glycyrrhizin', e.target.value)} placeholder="≥ 4% (root) / 8–12% (extract)" /></div>
+                                                    <div className="admin-field"><label>Foreign matter</label><input value={productForm.specs?.[prodLangTab]?.foreign_matter || ''} onChange={e => handleSpecChange('foreign_matter', e.target.value)} placeholder="≤ 1%" /></div>
                                                 </div>
-                                            </div>
-                                            <div className="admin-fields-row">
-                                                <div className="admin-field">
-                                                    <label>Glycyrrhizin</label>
-                                                    <input value={productForm.specs?.glycyrrhizin || ''} onChange={e => handleSpecChange('glycyrrhizin', e.target.value)} placeholder="≥ 4% (root) / 8–12% (extract)" />
+                                                <div className="admin-fields-row">
+                                                    <div className="admin-field"><label>Heavy metals</label><input value={productForm.specs?.[prodLangTab]?.heavy_metals || ''} onChange={e => handleSpecChange('heavy_metals', e.target.value)} placeholder="Within WHO/EU limits" /></div>
+                                                    <div className="admin-field"><label>Pesticide residues</label><input value={productForm.specs?.[prodLangTab]?.pesticide_residues || ''} onChange={e => handleSpecChange('pesticide_residues', e.target.value)} placeholder="Within WHO/EU limits" /></div>
                                                 </div>
-                                                <div className="admin-field">
-                                                    <label>Foreign matter</label>
-                                                    <input value={productForm.specs?.foreign_matter || ''} onChange={e => handleSpecChange('foreign_matter', e.target.value)} placeholder="≤ 1%" />
-                                                </div>
-                                            </div>
-                                            <div className="admin-fields-row">
-                                                <div className="admin-field">
-                                                    <label>Heavy metals</label>
-                                                    <input value={productForm.specs?.heavy_metals || ''} onChange={e => handleSpecChange('heavy_metals', e.target.value)} placeholder="Within WHO/EU limits" />
-                                                </div>
-                                                <div className="admin-field">
-                                                    <label>Pesticide residues</label>
-                                                    <input value={productForm.specs?.pesticide_residues || ''} onChange={e => handleSpecChange('pesticide_residues', e.target.value)} placeholder="Within WHO/EU limits" />
-                                                </div>
-                                            </div>
+                                            </>)}
 
-                                            <p className="admin-form-section-sublabel">Microbiology</p>
-                                            <div className="admin-fields-row">
-                                                <div className="admin-field">
-                                                    <label>TPC</label>
-                                                    <input value={productForm.specs?.tpc || ''} onChange={e => handleSpecChange('tpc', e.target.value)} placeholder="≤ 100,000 CFU/g" />
+                                            {/* Microbiology */}
+                                            <button type="button" className="admin-spec-section-toggle" onClick={() => toggleSpecSection('microbiology')}>
+                                                <span>Microbiology</span>
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: openSpecSections.microbiology ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}><polyline points="6 9 12 15 18 9"/></svg>
+                                            </button>
+                                            {openSpecSections.microbiology && (<>
+                                                <div className="admin-fields-row">
+                                                    <div className="admin-field"><label>TPC</label><input value={productForm.specs?.[prodLangTab]?.tpc || ''} onChange={e => handleSpecChange('tpc', e.target.value)} placeholder="≤ 100,000 CFU/g" /></div>
+                                                    <div className="admin-field"><label>Yeast & Mould</label><input value={productForm.specs?.[prodLangTab]?.yeast_mould || ''} onChange={e => handleSpecChange('yeast_mould', e.target.value)} placeholder="≤ 1,000 CFU/g" /></div>
                                                 </div>
-                                                <div className="admin-field">
-                                                    <label>Yeast & Mould</label>
-                                                    <input value={productForm.specs?.yeast_mould || ''} onChange={e => handleSpecChange('yeast_mould', e.target.value)} placeholder="≤ 1,000 CFU/g" />
+                                                <div className="admin-fields-row">
+                                                    <div className="admin-field"><label>E. coli</label><input value={productForm.specs?.[prodLangTab]?.e_coli || ''} onChange={e => handleSpecChange('e_coli', e.target.value)} placeholder="Absent" /></div>
+                                                    <div className="admin-field"><label>Salmonella</label><input value={productForm.specs?.[prodLangTab]?.salmonella || ''} onChange={e => handleSpecChange('salmonella', e.target.value)} placeholder="Absent" /></div>
                                                 </div>
-                                            </div>
-                                            <div className="admin-fields-row">
-                                                <div className="admin-field">
-                                                    <label>E. coli</label>
-                                                    <input value={productForm.specs?.e_coli || ''} onChange={e => handleSpecChange('e_coli', e.target.value)} placeholder="Absent" />
-                                                </div>
-                                                <div className="admin-field">
-                                                    <label>Salmonella</label>
-                                                    <input value={productForm.specs?.salmonella || ''} onChange={e => handleSpecChange('salmonella', e.target.value)} placeholder="Absent" />
-                                                </div>
-                                            </div>
+                                            </>)}
 
-                                            <p className="admin-form-section-sublabel">Storage & Shelf Life</p>
-                                            <div className="admin-fields-row">
-                                                <div className="admin-field">
-                                                    <label>Shelf life</label>
-                                                    <input value={productForm.specs?.shelf_life || ''} onChange={e => handleSpecChange('shelf_life', e.target.value)} placeholder="24 months" />
+                                            {/* Storage & Shelf Life */}
+                                            <button type="button" className="admin-spec-section-toggle" onClick={() => toggleSpecSection('storage')}>
+                                                <span>Storage & Shelf Life</span>
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: openSpecSections.storage ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}><polyline points="6 9 12 15 18 9"/></svg>
+                                            </button>
+                                            {openSpecSections.storage && (
+                                                <div className="admin-fields-row">
+                                                    <div className="admin-field"><label>Shelf life</label><input value={productForm.specs?.[prodLangTab]?.shelf_life || ''} onChange={e => handleSpecChange('shelf_life', e.target.value)} placeholder="24 months" /></div>
+                                                    <div className="admin-field"><label>Storage conditions</label><input value={productForm.specs?.[prodLangTab]?.storage || ''} onChange={e => handleSpecChange('storage', e.target.value)} placeholder="≤ 25°C, cool dry, no sunlight" /></div>
                                                 </div>
-                                                <div className="admin-field">
-                                                    <label>Storage conditions</label>
-                                                    <input value={productForm.specs?.storage || ''} onChange={e => handleSpecChange('storage', e.target.value)} placeholder="≤ 25°C, cool dry, no sunlight" />
+                                            )}
+
+                                            {/* Accompanying Documents */}
+                                            <button type="button" className="admin-spec-section-toggle" onClick={() => toggleSpecSection('documents')}>
+                                                <span>Accompanying Documents</span>
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: openSpecSections.documents ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}><polyline points="6 9 12 15 18 9"/></svg>
+                                            </button>
+                                            {openSpecSections.documents && (() => {
+                                                const currentDocs = productForm.specs?.[prodLangTab]?.documents || [];
+                                                const fallbackLang = (adminTranslations.languages || []).find(l => l.code !== prodLangTab && (productForm.specs?.[l.code]?.documents || []).length > 0);
+                                                const fallbackDocs = fallbackLang ? (productForm.specs[fallbackLang.code].documents) : [];
+                                                return (
+                                                <div className="admin-doc-builder">
+                                                    {currentDocs.length === 0 && fallbackDocs.length > 0 && (
+                                                        <div className="admin-doc-copy-hint">
+                                                            <span>No documents for this language.</span>
+                                                            <button
+                                                                type="button"
+                                                                className="admin-btn-secondary admin-btn-sm"
+                                                                onClick={() => handleSpecChange('documents', [...fallbackDocs])}
+                                                            >
+                                                                Copy from {fallbackLang.label} to translate
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                    <div className="admin-doc-input-row">
+                                                        <input
+                                                            type="text"
+                                                            value={newDocInput}
+                                                            onChange={e => setNewDocInput(e.target.value)}
+                                                            placeholder="e.g. Phytosanitary Certificate"
+                                                            onKeyDown={e => {
+                                                                if (e.key === 'Enter') {
+                                                                    e.preventDefault();
+                                                                    const val = newDocInput.trim();
+                                                                    if (!val) return;
+                                                                    handleSpecChange('documents', [...currentDocs, val]);
+                                                                    setNewDocInput('');
+                                                                }
+                                                            }}
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            className="admin-btn-secondary admin-doc-add-btn"
+                                                            onClick={() => {
+                                                                const val = newDocInput.trim();
+                                                                if (!val) return;
+                                                                handleSpecChange('documents', [...currentDocs, val]);
+                                                                setNewDocInput('');
+                                                            }}
+                                                        >
+                                                            Add
+                                                        </button>
+                                                    </div>
+                                                    {currentDocs.length > 0 && (
+                                                        <ul className="admin-doc-items">
+                                                            {currentDocs.map((doc, i) => (
+                                                                <li key={i} className="admin-doc-tag">
+                                                                    <input
+                                                                        type="text"
+                                                                        value={doc}
+                                                                        onChange={e => {
+                                                                            const updated = [...currentDocs];
+                                                                            updated[i] = e.target.value;
+                                                                            handleSpecChange('documents', updated);
+                                                                        }}
+                                                                    />
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleSpecChange('documents', currentDocs.filter((_, idx) => idx !== i))}
+                                                                        aria-label="Remove"
+                                                                    >×</button>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    )}
                                                 </div>
-                                            </div>
+                                                );
+                                            })()}
                                         </div>
                                     </div>
 
@@ -1800,7 +1946,7 @@ const AdminDashboard = () => {
                                         >
                                             {productSaving ? 'Saving…' : (isAdding ? 'Add Product' : 'Save Changes')}
                                         </button>
-                                        <button className="admin-btn-secondary" onClick={cancelEdit}>
+                                        <button className="admin-btn-secondary" onClick={() => cancelEdit(true)}>
                                             Cancel
                                         </button>
                                     </div>

@@ -15,7 +15,7 @@ const Footer = () => {
             <div className="footer-content">
                 <div className="footer-logo reveal reveal-delay-1">
                     <Link to="/">
-                        <img src="/Logo/B5-logo.png" alt="Bogot Master" />
+                        <img src="/Logo/new-logo.png" alt="Bogot Master" />
                     </Link>
                     <p>{t('footer_slogan')}</p>
                 </div>

@@ -43,7 +43,7 @@ const Navbar = () => {
             <div className="navbar-container">
                 <div className="navbar-logo">
                     <Link to="/" onClick={close}>
-                        <img src="/images/B5-logo.png" alt="Bogot Master Logo" />
+                        <img src="/Logo/new-logo.png" alt="Bogot Master Logo" />
                     </Link>
                 </div>
 

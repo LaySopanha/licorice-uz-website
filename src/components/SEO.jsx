@@ -20,7 +20,7 @@ const SEO = ({
     const pageKeywords = keywords || t('meta_keywords');
     const ogTitle = title || t('og_title');
     const ogDescription = description || t('og_description');
-    const ogImage = image || `${SITE_URL}/Logo/B5-logo.png`;
+    const ogImage = image || `${SITE_URL}/Logo/new-logo.png`;
     const canonical = `${SITE_URL}${pathname === '/' ? '' : pathname}`;
 
     const orgSchema = {
@@ -28,7 +28,7 @@ const SEO = ({
         '@type': 'Organization',
         'name': 'Bogot Master Licorice Export',
         'url': SITE_URL,
-        'logo': `${SITE_URL}/Logo/B5-logo.png`,
+        'logo': `${SITE_URL}/Logo/new-logo.png`,
         'description': t('schema_description'),
         'address': {
             '@type': 'PostalAddress',

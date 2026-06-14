@@ -35,7 +35,7 @@ const AdminLogin = () => {
     return (
         <div className="admin-login-page">
             <div className="admin-login-card">
-                <img src="/images/B5-logo.png" alt="Bogot Master" className="admin-logo" />
+                <img src="/Logo/new-logo.png" alt="Bogot Master" className="admin-logo" />
                 <h1>Admin Panel</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="admin-field">

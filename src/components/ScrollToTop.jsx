@@ -4,12 +4,11 @@ import { useLocation } from 'react-router-dom';
 export default function ScrollToTop() {
     const { pathname } = useLocation();
     useEffect(() => {
+        if (pathname.startsWith('/admin')) return;
         window.scrollTo(0, 0);
-        if (!pathname.startsWith('/admin')) {
-            import('../firebase/firestore')
-                .then(({ trackPageView }) => trackPageView(pathname))
-                .catch(() => {});
-        }
+        import('../firebase/firestore')
+            .then(({ trackPageView }) => trackPageView(pathname))
+            .catch(() => {});
     }, [pathname]);
     return null;
 }
