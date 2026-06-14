@@ -65,7 +65,7 @@ const ProductDetail = ({ addToast }) => {
     return (
         <Layout>
             <SEO
-                title={`${product.title} — Bogot Master`}
+                title={`${product.title} | Bogot Master`}
                 description={product.description}
                 image={productImage}
                 structuredData={productSchema}
