@@ -1,5 +1,5 @@
-// Seed / fallback content. Kept free of any Firebase import so it can be
-// bundled into the initial app load without pulling in the Firebase SDK.
+// Seed / fallback content. Kept free of any Supabase import so it can be
+// bundled into the initial app load without pulling in the Supabase SDK.
 
 export const SEED_PRODUCTS = [
     {

@@ -1,92 +1,51 @@
-import emailjs from '@emailjs/browser';
-import { EMAILJS_CONFIG } from '../config';
-import { saveInquiry } from '../firebase/firestore';
+import { saveInquiry } from '../supabase/data';
 
-const EMAIL_CONFIG = {
-    ...EMAILJS_CONFIG,
-    autoReplyTemplateId: import.meta.env.VITE_EMAILJS_AUTO_REPLY_TEMPLATE_ID || '',
-};
+// Email is sent by the Vercel serverless function at /api/send (which holds the
+// Resend API key server-side). This module just records the lead in Supabase and
+// forwards the form data to that endpoint.
 
-emailjs.init(EMAIL_CONFIG.publicKey);
-
-const AUTO_REPLY_BODY = {
-    ru: (name, product) =>
-        `Здравствуйте, ${name}!\n\nСпасибо за ваш запрос${product ? ` по продукту «${product}»` : ''}.\nНаш специалист свяжется с вами в течение 24 часов.\n\nС уважением,\nКоманда Bogot Master`,
-    en: (name, product) =>
-        `Hello, ${name}!\n\nThank you for your inquiry${product ? ` regarding «${product}»` : ''}.\nOur specialist will contact you within 24 hours.\n\nBest regards,\nBogot Master Team`,
-};
-
-async function sendAutoReply(email, name, language = 'ru', product = '') {
-    const templateId = EMAIL_CONFIG.autoReplyTemplateId;
-    if (!templateId) return;
-    try {
-        await emailjs.send(EMAIL_CONFIG.serviceId, templateId, {
-            to_email: email,
-            to_name: name,
-            message: AUTO_REPLY_BODY[language]?.(name, product) || AUTO_REPLY_BODY.ru(name, product),
-            product_name: product,
-        });
-    } catch (err) {
-        console.warn('Auto-reply failed:', err);
+async function postSend(payload) {
+    const res = await fetch('/api/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+    });
+    let data = {};
+    try { data = await res.json(); } catch { /* non-JSON response */ }
+    if (!res.ok || !data.success) {
+        return { success: false, message: data.message || `Request failed (${res.status})` };
     }
+    return { success: true };
 }
 
 export const sendContactEmail = async (formData, language = 'ru') => {
-    // Always record the lead first — a failed/unconfigured email must not lose it.
+    // Record the lead first — a failed email must never lose it.
     saveInquiry({ type: 'contact', name: formData.name, email: formData.email, message: formData.message })
         .catch(err => console.warn('saveInquiry failed:', err));
 
-    try {
-        const templateParams = {
-            from_name: formData.name,
-            from_email: formData.email,
-            message: formData.message,
-            to_name: 'Bogot Master',
-        };
-
-        const response = await emailjs.send(
-            EMAIL_CONFIG.serviceId,
-            EMAIL_CONFIG.contactTemplateId,
-            templateParams
-        );
-
-        sendAutoReply(formData.email, formData.name, language);
-
-        return { success: true, response };
-    } catch (error) {
-        console.error('EmailJS Error:', error);
-        return { success: false, message: error.text || 'Failed to send email', error };
-    }
+    return postSend({
+        type: 'contact',
+        language,
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+    });
 };
 
 export const sendPriceInquiryEmail = async (formData, language = 'ru') => {
     saveInquiry({ type: 'price', name: formData.name, email: formData.email, phone: formData.phone, product: formData.product, quantity: formData.quantity, message: formData.message })
         .catch(err => console.warn('saveInquiry failed:', err));
 
-    try {
-        const templateParams = {
-            from_name: formData.name,
-            from_email: formData.email,
-            phone: formData.phone,
-            product_name: formData.product,
-            quantity: formData.quantity,
-            message: formData.message || '—',
-            to_name: 'Bogot Master',
-        };
-
-        const response = await emailjs.send(
-            EMAIL_CONFIG.serviceId,
-            EMAIL_CONFIG.priceTemplateId,
-            templateParams
-        );
-
-        sendAutoReply(formData.email, formData.name, language, formData.product);
-
-        return { success: true, response };
-    } catch (error) {
-        console.error('EmailJS Error:', error);
-        return { success: false, message: error.text || 'Failed to send email', error };
-    }
+    return postSend({
+        type: 'price',
+        language,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        product: formData.product,
+        quantity: formData.quantity,
+        message: formData.message,
+    });
 };
 
 export const sendQuoteEmail = async (formData, items, language = 'ru') => {
@@ -100,42 +59,20 @@ export const sendQuoteEmail = async (formData, items, language = 'ru') => {
         message: formData.message || '',
     }).catch(err => console.warn('saveInquiry failed:', err));
 
-    try {
-        const productList = items
-            .map(i => `• ${i.title}${i.quantity ? ` — ${i.quantity}` : ''}`)
-            .join('\n');
-
-        const header = language === 'ru'
-            ? 'Запрос предложения на несколько товаров'
-            : 'Multi-product quote request';
-
-        const templateParams = {
-            from_name: formData.name,
-            from_email: formData.email,
-            phone: formData.phone,
-            product_name: items.map(i => i.title).join(', '),
-            quantity: `${items.length} ${language === 'ru' ? 'поз.' : 'items'}`,
-            message: `${header}:\n${productList}\n\n${formData.company ? `${language === 'ru' ? 'Компания' : 'Company'}: ${formData.company}\n` : ''}${formData.message || ''}`,
-            to_name: 'Bogot Master',
-        };
-
-        const response = await emailjs.send(
-            EMAIL_CONFIG.serviceId,
-            EMAIL_CONFIG.priceTemplateId,
-            templateParams
-        );
-
-        sendAutoReply(formData.email, formData.name, language);
-
-        return { success: true, response };
-    } catch (error) {
-        console.error('EmailJS Error:', error);
-        return { success: false, message: error.text || 'Failed to send email', error };
-    }
+    return postSend({
+        type: 'quote',
+        language,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company || '',
+        product: items.map(i => i.title).join(', '),
+        items: items.map(i => ({ title: i.title, quantity: i.quantity || '' })),
+        message: formData.message || '',
+    });
 };
 
-export const isEmailConfigured = () =>
-    EMAIL_CONFIG.serviceId !== 'YOUR_SERVICE_ID' &&
-    EMAIL_CONFIG.contactTemplateId !== 'YOUR_CONTACT_TEMPLATE_ID' &&
-    EMAIL_CONFIG.priceTemplateId !== 'YOUR_PRICE_TEMPLATE_ID' &&
-    EMAIL_CONFIG.publicKey !== 'YOUR_PUBLIC_KEY';
+// Kept for backwards compatibility with the form components. Configuration now
+// lives server-side (in the /api/send function), so the client always attempts
+// to send and relies on the endpoint's response.
+export const isEmailConfigured = () => true;

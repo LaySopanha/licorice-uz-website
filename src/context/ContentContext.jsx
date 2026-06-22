@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { SEED_PRODUCTS, SEED_SETTINGS } from '../firebase/seed';
+import { SEED_PRODUCTS, SEED_SETTINGS } from '../data/seed';
 import { useLanguage } from './LanguageContext';
 
 const ContentContext = createContext();
@@ -15,10 +15,10 @@ export const ContentProvider = ({ children }) => {
     useEffect(() => {
         async function load() {
             try {
-                // Dynamically import Firestore so the Firebase SDK stays out of
-                // the initial bundle / critical path. Seed data renders instantly;
-                // live content swaps in once Firestore resolves.
-                const { fetchProducts, fetchSettings } = await import('../firebase/firestore');
+                // Dynamically import the data layer so the Supabase SDK stays out
+                // of the initial bundle / critical path. Seed data renders instantly;
+                // live content swaps in once Supabase resolves.
+                const { fetchProducts, fetchSettings } = await import('../supabase/data');
                 const [products, settings] = await Promise.all([
                     fetchProducts(),
                     fetchSettings(),
@@ -56,7 +56,7 @@ export const ContentProvider = ({ children }) => {
 
     const refreshProducts = async () => {
         try {
-            const { fetchProducts } = await import('../firebase/firestore');
+            const { fetchProducts } = await import('../supabase/data');
             const products = await fetchProducts();
             if (products.length) setRawProducts(products);
         } catch { /* silent */ }
@@ -64,7 +64,7 @@ export const ContentProvider = ({ children }) => {
 
     const refreshSettings = async () => {
         try {
-            const { fetchSettings } = await import('../firebase/firestore');
+            const { fetchSettings } = await import('../supabase/data');
             const settings = await fetchSettings();
             if (settings) setRawSettings(settings);
         } catch { /* silent */ }

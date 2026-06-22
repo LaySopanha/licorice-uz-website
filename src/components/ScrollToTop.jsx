@@ -6,7 +6,7 @@ export default function ScrollToTop() {
     useEffect(() => {
         if (pathname.startsWith('/admin')) return;
         window.scrollTo(0, 0);
-        import('../firebase/firestore')
+        import('../supabase/data')
             .then(({ trackPageView }) => trackPageView(pathname))
             .catch(() => {});
     }, [pathname]);

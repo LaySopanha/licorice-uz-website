@@ -1,8 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef, useMemo, Fragment } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from '../../firebase/config';
-import { uploadProductImage, uploadGalleryImage } from '../../supabase/config';
+import { uploadProductImage, uploadGalleryImage, signOut, onAuth } from '../../supabase/config';
 import {
     fetchProducts, fetchSettings,
     saveProduct, saveSettings, deleteProduct,
@@ -11,7 +9,7 @@ import {
     fetchStats,
     fetchTranslations, saveTranslations,
     SEED_TRANSLATIONS,
-} from '../../firebase/firestore';
+} from '../../supabase/data';
 import { useLanguage } from '../../context/LanguageContext';
 import './Admin.css';
 
@@ -341,12 +339,11 @@ const AdminDashboard = () => {
     const fileInputRef = useRef();
 
     useEffect(() => {
-        const unsub = onAuthStateChanged(auth, user => {
+        return onAuth(user => {
             if (!user) navigate('/admin/login', { replace: true });
             else setUser(user);
             setAuthChecked(true);
         });
-        return unsub;
     }, [navigate]);
 
     useEffect(() => {
@@ -1136,7 +1133,7 @@ const AdminDashboard = () => {
                 </div>
                 <button
                     className="admin-btn-secondary"
-                    onClick={() => signOut(auth)}
+                    onClick={() => signOut()}
                 >
                     Sign Out
                 </button>

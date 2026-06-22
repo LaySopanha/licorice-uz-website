@@ -74,7 +74,7 @@ const Contact = ({ openPopup }) => {
 
         try {
             if (!isEmailConfigured()) {
-                console.warn('EmailJS not configured. See src/services/emailService.js');
+                console.warn('Email not configured. See src/services/emailService.js');
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 setSubmitStatus('success');
             } else {

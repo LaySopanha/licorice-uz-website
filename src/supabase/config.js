@@ -9,6 +9,27 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl || 'https://placeholder.supabase.co', supabaseAnonKey || 'placeholder');
 
+// ─── Auth (admin) ──────────────────────────────────────────────────────────
+
+export async function signIn(email, password) {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+}
+
+export async function signOut() {
+    await supabase.auth.signOut();
+}
+
+// Calls back with the user (or null) immediately and on every auth change.
+// Returns an unsubscribe function.
+export function onAuth(callback) {
+    supabase.auth.getSession().then(({ data }) => callback(data.session?.user ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+        callback(session?.user ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+}
+
 function assertConfigured() {
     if (!supabaseUrl || !supabaseAnonKey) {
         throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env');

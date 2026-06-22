@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import { SEED_TRANSLATIONS } from '../firebase/seed';
+import { SEED_TRANSLATIONS } from '../data/seed';
 
 const LanguageContext = createContext();
 
@@ -22,7 +22,7 @@ export const LanguageProvider = ({ children }) => {
 
     const loadTranslations = useCallback(async () => {
         try {
-            const { fetchTranslations } = await import('../firebase/firestore');
+            const { fetchTranslations } = await import('../supabase/data');
             const data = await fetchTranslations();
             if (!data) return;
             

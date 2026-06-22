@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../firebase/config';
+import { signIn, onAuth } from '../../supabase/config';
 import './Admin.css';
 
 const AdminLogin = () => {
@@ -12,10 +11,9 @@ const AdminLogin = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const unsub = onAuthStateChanged(auth, user => {
+        return onAuth(user => {
             if (user) navigate('/admin', { replace: true });
         });
-        return unsub;
     }, [navigate]);
 
     const handleSubmit = async (e) => {
@@ -23,7 +21,7 @@ const AdminLogin = () => {
         setError('');
         setLoading(true);
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            await signIn(email, password);
             navigate('/admin', { replace: true });
         } catch {
             setError('Invalid email or password.');

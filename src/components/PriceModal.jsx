@@ -83,13 +83,11 @@ const PriceModal = ({ isOpen, onClose, productTitle }) => {
         setIsSubmitting(true);
 
         try {
-            // Check if EmailJS is configured
             if (!isEmailConfigured()) {
-                console.warn('EmailJS not configured. See src/services/emailService.js');
+                console.warn('Email not configured. See src/services/emailService.js');
                 // Simulate success for demo purposes
                 await new Promise(resolve => setTimeout(resolve, 1000));
             } else {
-                // Send email via EmailJS
                 const result = await sendPriceInquiryEmail({
                     ...formData,
                     product: productTitle
