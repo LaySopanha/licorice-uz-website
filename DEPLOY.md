@@ -24,7 +24,9 @@ Follow the steps once. After that, every `git push` auto-deploys.
 
 4. **Authentication** → **Users** → **Add user** → **Create new user**:
    - Enter the admin email + password he wants for logging into `/admin`.
-   - (Optional) turn off "Auto Confirm User" is NOT needed — leave confirmed.
+5. **Authentication → Providers → Email** (or **Settings**) → **turn OFF**
+   "Allow new users to sign up". **Required** — the admin is the only account, and
+   leaving signups on would let anyone register and edit site content.
 
 5. **Project Settings** (gear icon) → **API**. Copy these two values, keep them
    for step 2:

@@ -3,6 +3,13 @@
 -- Run ONCE in the Supabase Dashboard → SQL Editor (idempotent — safe to re-run).
 -- After running: create the `products` + `gallery` storage buckets (public read,
 -- authenticated write) and add one admin user under Authentication → Users.
+--
+-- SECURITY — REQUIRED: the write policies below grant access to ANY signed-in
+-- user. This app has a single admin and no public sign-up flow, so you MUST turn
+-- OFF public signups, otherwise anyone could register via the anon key and edit
+-- content:  Authentication → Providers → Email → disable "Allow new users to
+-- sign up"  (a.k.a. Authentication → Settings → "Enable signups" = off).
+-- Create the admin account yourself under Authentication → Users.
 -- ───────────────────────────────────────────────────────────────────────────
 
 -- ─── Tables ─────────────────────────────────────────────────────────────────
@@ -75,6 +82,11 @@ security definer
 set search_path = public
 as $$
 begin
+    -- Reject malformed keys so anonymous callers can't bloat the jsonb blob.
+    if p_key is null or length(p_key) > 80 or p_key !~ '^[a-zA-Z0-9_-]+$' then
+        return;
+    end if;
+
     insert into public.stats (id, total, paths)
     values ('pageviews', 1, jsonb_build_object(p_key, 1))
     on conflict (id) do update set

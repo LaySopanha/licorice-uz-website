@@ -101,9 +101,58 @@ export function autoReplyHtml(message) {
     return shell(inner, { footerNote: 'This is an automated confirmation — no need to reply.' });
 }
 
+const EMAIL_RE = /^[^\s@,<>]+@[^\s@,<>]+\.[^\s@,<>]+$/;
+const TYPES = new Set(['contact', 'price', 'quote']);
+// Single-line clamp: strip all control chars (blocks header/subject injection).
+const clamp = (v, n) =>
+    (typeof v === 'string' ? v.replace(/[\x00-\x1f\x7f]/g, '').slice(0, n) : '');
+// Multi-line clamp: keep newlines, drop other control chars.
+const clampText = (v, n) =>
+    (typeof v === 'string'
+        ? v.replace(/\r\n?/g, '\n').replace(/[\x00-\x09\x0b-\x1f\x7f]/g, '').slice(0, n)
+        : '');
+
+// Best-effort in-memory rate limit. Serverless instances are ephemeral so this
+// only throttles within a warm instance — a backstop, not a guarantee. For hard
+// limits add Cloudflare Turnstile (CAPTCHA) + Upstash rate limiting (see DEPLOY.md).
+const HITS = new Map(); // ip -> number[] (timestamps)
+const RL_WINDOW_MS = 10 * 60 * 1000;
+const RL_MAX = 5;
+function rateLimited(ip) {
+    const now = Date.now();
+    const recent = (HITS.get(ip) || []).filter(t => now - t < RL_WINDOW_MS);
+    if (recent.length >= RL_MAX) { HITS.set(ip, recent); return true; }
+    recent.push(now);
+    HITS.set(ip, recent);
+    return false;
+}
+
+// Reject browser requests coming from a different site (basic anti-abuse).
+// Same-origin fetches send an Origin whose host matches the request host. If
+// ALLOWED_ORIGIN is set it takes precedence (comma-separated list of hosts).
+function originAllowed(req) {
+    const origin = req.headers.origin;
+    if (!origin) return true; // non-browser / same-origin without Origin — allow
+    let host;
+    try { host = new URL(origin).host; } catch { return false; }
+    const allow = (process.env.ALLOWED_ORIGIN || '')
+        .split(',').map(s => s.trim()).filter(Boolean);
+    if (allow.length) return allow.includes(host);
+    return host === req.headers.host;
+}
+
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
+    }
+
+    if (!originAllowed(req)) {
+        return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+
+    const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+    if (rateLimited(ip)) {
+        return res.status(429).json({ success: false, message: 'Too many requests' });
     }
 
     const { RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL } = process.env;
@@ -112,13 +161,40 @@ export default async function handler(req, res) {
         return res.status(500).json({ success: false, message: 'Email not configured' });
     }
 
-    const d = req.body || {};
-    if (!d.email || !d.name) {
-        return res.status(400).json({ success: false, message: 'Missing name or email' });
+    const body = req.body || {};
+
+    // Validate + clamp every field. Reject (not truncate) so abuse is visible.
+    const email = clamp(body.email, 254).trim();
+    const name = clamp(body.name, 100).trim();
+    if (!name || !email || !EMAIL_RE.test(email)) {
+        return res.status(400).json({ success: false, message: 'Invalid name or email' });
+    }
+    if (typeof body.message === 'string' && body.message.length > 5000) {
+        return res.status(400).json({ success: false, message: 'Message too long' });
+    }
+    if (Array.isArray(body.items) && body.items.length > 20) {
+        return res.status(400).json({ success: false, message: 'Too many items' });
     }
 
+    const d = {
+        type: TYPES.has(body.type) ? body.type : 'inquiry',
+        name,
+        email,
+        phone: clamp(body.phone, 32),
+        company: clamp(body.company, 200),
+        product: clamp(body.product, 200),
+        quantity: clamp(body.quantity, 64),
+        message: clampText(body.message, 5000),
+        items: Array.isArray(body.items)
+            ? body.items.slice(0, 20).map(i => ({
+                title: clamp(i?.title, 200),
+                quantity: clamp(i?.quantity, 64),
+            }))
+            : [],
+    };
+
     const resend = new Resend(RESEND_API_KEY);
-    const language = d.language === 'en' ? 'en' : 'ru';
+    const language = body.language === 'en' ? 'en' : 'ru';
 
     try {
         // 1) Notify the business. reply_to = customer, so a reply goes straight back.
@@ -126,7 +202,7 @@ export default async function handler(req, res) {
             from: CONTACT_FROM_EMAIL,
             to: CONTACT_TO_EMAIL,
             replyTo: d.email,
-            subject: `New ${d.type || 'inquiry'} from ${d.name}`,
+            subject: `New ${d.type} from ${d.name}`,
             html: businessHtml(d),
         });
         if (error) throw new Error(error.message || 'Resend error');
